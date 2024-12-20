@@ -3,10 +3,10 @@ import { Input } from "../ui/input";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { SelectItem } from "@radix-ui/react-select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 
@@ -51,15 +51,15 @@ function CommonForm({
             value={value}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.placeholder} />
+              <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
             <SelectContent>
               {getControlItem.options && getControlItem.options.length > 0
-                ? getControlItem.options.map((option) => {
-                    <SelectItem key={option.name} value={option.name}>
+                ? getControlItem.options.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
                       {option.label}
-                    </SelectItem>;
-                  })
+                    </SelectItem>
+                  ))
                 : null}
             </SelectContent>
           </Select>

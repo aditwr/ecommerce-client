@@ -20,6 +20,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuthThunk } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
+import { testThunk } from "./store/admin/products-slice";
+import store from "./store/store";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -27,7 +29,6 @@ function App() {
   );
   const dispatch = useDispatch();
   const state = useSelector((state) => state.auth);
-  console.log(state);
 
   useEffect(() => {
     dispatch(checkAuthThunk());

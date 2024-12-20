@@ -47,6 +47,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    // action creator name : reducer function
     setUser: (state, action) => {},
   },
   extraReducers: (builder) => {
