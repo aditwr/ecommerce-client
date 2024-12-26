@@ -16,6 +16,7 @@ function CommonForm({
   setFormData,
   onSubmit,
   buttonText,
+  isFormValid,
 }) {
   const renderInputsByComponentType = (getControlItem) => {
     let element = null;
@@ -28,7 +29,7 @@ function CommonForm({
             placeholder={getControlItem.placeholder}
             id={getControlItem.name}
             type={getControlItem.type}
-            value={value}
+            value={value || ""}
             onChange={(e) =>
               setFormData({
                 ...formData,

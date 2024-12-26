@@ -35,7 +35,7 @@ function MenuItems({ setOpen }) {
             key={menu.id}
             onClick={() => {
               navigate(menu.path);
-              setOpen(false);
+              // setOpen(false);
             }}
             className="flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
           >

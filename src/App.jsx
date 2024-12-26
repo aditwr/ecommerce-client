@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuthThunk } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
-import { testThunk } from "./store/admin/products-slice";
 import store from "./store/store";
 
 function App() {

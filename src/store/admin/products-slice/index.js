@@ -14,14 +14,11 @@ export const addNewProduct = createAsyncThunk(
       "http://localhost:5000/api/admin/products/add",
       productData
     );
-    // Return the product data
-    console.log(response);
-    alert("Product added successfully");
     return response.data;
   }
 );
 
-// think is a function that takes a string and a callback function as arguments
+// thunk is a function that takes a string and a callback function as arguments
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAll",
   async () => {
@@ -31,6 +28,24 @@ export const fetchAllProducts = createAsyncThunk(
     return response.data;
   }
 );
+
+export const editProduct = createAsyncThunk(
+  "products/edit",
+  async ({ id, formData }) => {
+    const response = await axios.put(
+      `http://localhost:5000/api/admin/products/edit/${id}`,
+      formData
+    );
+    return response.data;
+  }
+);
+
+export const deleteProduct = createAsyncThunk("products/delete", async (id) => {
+  const response = await axios.delete(
+    `http://localhost:5000/api/admin/products/delete/${id}`
+  );
+  return response.data;
+});
 
 export const testThunk = createAsyncThunk("test/thunk", async () => {
   console.log("test Thunk called");
@@ -42,14 +57,49 @@ const adminProductsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // fetch all products thunk reducers
+    builder.addCase(fetchAllProducts.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(fetchAllProducts.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.productList = action.payload.data;
+    });
+    builder.addCase(fetchAllProducts.rejected, (state) => {
+      state.isLoading = false;
+      state.productList = [];
+    });
+
     // add new product thunk reducers
     builder.addCase(addNewProduct.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(addNewProduct.fulfilled(), (state, action) => {
+    builder.addCase(addNewProduct.fulfilled(), (state) => {
       state.isLoading = false;
     });
     builder.addCase(addNewProduct.rejected(), (state) => {
+      state.isLoading = false;
+    });
+
+    // edit product thunk reducers
+    builder.addCase(editProduct.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(editProduct.fulfilled(), (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(editProduct.rejected(), (state) => {
+      state.isLoading = false;
+    });
+
+    // delete product thunk reducers
+    builder.addCase(deleteProduct.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteProduct.fulfilled(), (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(deleteProduct.rejected(), (state) => {
       state.isLoading = false;
     });
   },

@@ -43,12 +43,27 @@ export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
   return response.data;
 });
 
+export const logoutUserThunk = createAsyncThunk("/auth/logout", async () => {
+  const response = await axios.post(
+    "http://localhost:5000/api/auth/logout",
+    {}, // post method requires a body, so we pass an empty object
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     // action creator name : reducer function
     setUser: (state, action) => {},
+    logOut: (state, action) => {
+      // do api cals to logout the user
+      // can't do that here
+    },
   },
   extraReducers: (builder) => {
     // add reducers for registerUserThunk
@@ -104,6 +119,21 @@ const authSlice = createSlice({
       }
     });
     builder.addCase(checkAuthThunk.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      state.user = null;
+    });
+
+    // add reducers for logoutUserThunk
+    builder.addCase(logoutUserThunk.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(logoutUserThunk.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      state.user = null;
+    });
+    builder.addCase(logoutUserThunk.rejected, (state, action) => {
       state.isLoading = false;
       state.isAuthenticated = false;
       state.user = null;
