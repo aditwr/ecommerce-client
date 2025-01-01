@@ -39,6 +39,20 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload.message; // error.message
       });
+
+    builder
+      .addCase(increaseCartProductQuantityThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(increaseCartProductQuantityThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cart = action.payload.data;
+      })
+      .addCase(increaseCartProductQuantityThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      });
   },
 });
 
@@ -68,6 +82,25 @@ export const getCartDataThunk = createAsyncThunk(
     try {
       const response = await axios.get(
         `http://localhost:5000/api/shop/cart/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
+export const increaseCartProductQuantityThunk = createAsyncThunk(
+  "cart/increaseCartProductQuantity",
+  async ({ userId, productId, quantity }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/shop/cart/increase",
+        {
+          userId,
+          productId,
+          quantity,
+        }
       );
       return response.data;
     } catch (error) {

@@ -25,6 +25,7 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
             height={600}
           />
         </div>
+        <DialogTitle></DialogTitle>
         <div className="grid gap-6">
           <DialogHeader>
             <DialogTitle className="text-3xl font-extrabold">
