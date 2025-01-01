@@ -102,3 +102,65 @@ export const addProductFormControls = [
     placeholder: "Enter total stock",
   },
 ];
+
+export const shoppingViewHeaderMenuItems = [
+  {
+    id: "home",
+    label: "Home",
+    path: "/shop/home",
+  },
+  {
+    id: "men",
+    label: "Men",
+    path: "/shop/listing",
+  },
+  {
+    id: "woman",
+    label: "Woman",
+    path: "/shop/listing",
+  },
+  {
+    id: "kids",
+    label: "Kids",
+    path: "/shop/listing",
+  },
+  {
+    id: "footwear",
+    label: "Footwear",
+    path: "/shop/listing",
+  },
+  {
+    id: "accessories",
+    label: "Accessories",
+    path: "/shop/listing",
+  },
+];
+
+export const shoppingProductFilterOptions = {
+  category: [
+    { id: "men", label: "Men" },
+    { id: "women", label: "Women" },
+    { id: "kids", label: "Kids" },
+    { id: "footwear", label: "Footwear" },
+    { id: "accessories", label: "Accessories" },
+  ],
+  brand: [
+    { id: "nike", label: "Nike" },
+    { id: "adidas", label: "Adidas" },
+    { id: "puma", label: "Puma" },
+    { id: "reebok", label: "Reebok" },
+    { id: "under-armour", label: "Under Armour" },
+    { id: "zara", label: "Zara" },
+    { id: "h&m", label: "H&M" },
+    { id: "forever-21", label: "Forever 21" },
+  ],
+};
+
+export const shoppingProductSortOptions = [
+  { id: "price-low-to-high", label: "Price: Low to High" },
+  { id: "price-high-to-low", label: "Price: High to Low" },
+  { id: "newest", label: "Newest" },
+  { id: "oldest", label: "Oldest" },
+  { id: "title-ascending", label: "Title: A-Z" },
+  { id: "title-descending", label: "Title: Z-A" },
+];

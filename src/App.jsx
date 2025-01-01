@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { checkAuthThunk } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
 import store from "./store/store";
+import { getCartDataThunk } from "./store/shop/CartSlice";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -28,10 +29,20 @@ function App() {
   );
   const dispatch = useDispatch();
   const state = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
 
+  // Check if user is authenticated with jwt token in cookies
+  // If authenticated, decode the token and get user data
+  // Store the user authenticated data in redux store
   useEffect(() => {
     dispatch(checkAuthThunk());
-  }, [dispatch]);
+  }, []);
+
+  // Get cart data of the user if authenticated from the server
+  // store the cart data in redux store
+  useEffect(() => {
+    if (user) dispatch(getCartDataThunk(user.id));
+  }, [user]);
 
   if (isLoading) {
     return <Skeleton className="w-[800px] bg-black h-[60px]" />;
