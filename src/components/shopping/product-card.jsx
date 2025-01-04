@@ -10,22 +10,21 @@ import { Button } from "../ui/button";
 import { ShoppingCartIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-function ShoppingProductCard({ product, handleGetProductDetails }) {
+function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { toast } = useToast();
 
   const handleAddProductToCart = ({ userId, productId, quantity }) => {
-    dispatch(addProductToCartThunk({ userId, productId, quantity })).then(
-      () => {
-        dispatch(getCartDataThunk(user.id));
+    dispatch(addProductToCartThunk({ userId, productId, quantity }))
+      .then(() => {
         toast({
           title: "Product added to cart",
           description: "Check your cart to view the product",
           type: "success",
         });
-      }
-    );
+      })
+      .then(() => dispatch(getCartDataThunk(userId)));
   };
 
   return (

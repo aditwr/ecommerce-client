@@ -6,16 +6,57 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import {
+  EllipsisIcon,
+  MinusIcon,
+  PlusIcon,
+  ShoppingCartIcon,
+  Trash,
+  TrashIcon,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { increaseCartProductQuantityThunk } from "@/store/shop/CartSlice";
+import {
+  decreaseCartProductQuantityThunk,
+  getCartDataThunk,
+  increaseCartProductQuantityThunk,
+  removeProductFromCartThunk,
+} from "@/store/shop/CartSlice";
+import { Badge } from "../ui/badge";
 
 function ShoppingCart() {
   const { cart } = useSelector((state) => state.cart);
+
   const { user } = useSelector((state) => state.auth);
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -26,20 +67,48 @@ function ShoppingCart() {
         userId: user.id,
         productId,
         quantity,
-      }).then((response) => {
-        console.log(response);
       })
-    );
+    ).then(() => {
+      dispatch(getCartDataThunk(user.id));
+    });
+  }
+
+  function handleDecreaseQuantity({ productId, quantity }) {
+    dispatch(
+      decreaseCartProductQuantityThunk({
+        userId: user.id,
+        productId,
+        quantity,
+      })
+    ).then(() => {
+      dispatch(getCartDataThunk(user.id));
+    });
+  }
+
+  function handleRemoveProductFromCart({ productId }) {
+    dispatch(
+      removeProductFromCartThunk({
+        userId: user.id,
+        productId,
+      })
+    ).then((response) => {
+      dispatch(getCartDataThunk(user.id));
+      toast({
+        title: response.payload.message,
+      });
+    });
   }
 
   // Calculate subtotal price of products in cart
   let subtotal = 0;
   if (cart.products) {
     cart.products.map((product) => {
-      subtotal += product.quantity * product.productId.salePrice;
+      subtotal +=
+        product.quantity *
+        (product.productId.salePrice ?? product.productId.price);
     });
   }
-  let shippingCost = 0;
+  let shippingCost = 10;
   let total = subtotal + shippingCost;
 
   return (
@@ -83,16 +152,23 @@ function ShoppingCart() {
                         alt={product.productId.title}
                         className="object-cover rounded-lg w-14 h-14"
                       />
-                      <div className="">
-                        <h4 className="text-sm font-semibold line-clamp-1">
+                      <div className="flex flex-col gap-2">
+                        <h4 className="text-sm font-semibold line-clamp-2">
                           {product.productId.title}
                         </h4>
-                        <p className="flex items-baseline text-sm text-gray-500">
-                          {product.quantity} x $
-                          {product.productId.salePrice ??
-                            product.productId.price}{" "}
+                        <p className="flex items-baseline text-sm text-gray-500 gap-x-1.5">
+                          <span className="flex items-center justify-center w-auto h-5 px-2 text-sm font-medium rounded-full gap-x-1 text-background bg-primary/80">
+                            {product.quantity}
+                            <span className="text-xs">pcs</span>
+                          </span>{" "}
+                          x
+                          <span className="text-sm">
+                            $
+                            {product.productId.salePrice ??
+                              product.productId.price}{" "}
+                          </span>
                           : &nbsp;
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-foreground">
                             $
                             {product.quantity *
                               (product.productId.salePrice ??
@@ -101,45 +177,97 @@ function ShoppingCart() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button className="w-8 h-8" variant="outline" size="icon">
-                        <MinusIcon className="w-2 h-2" />
-                      </Button>
-                      <span>{product.quantity}</span>
-                      <Button
-                        className="w-8 h-8"
-                        variant="outline"
-                        size="icon"
-                        onClick={() =>
-                          handleIncreaseQuantity({
-                            productId: product.productId._id,
-                            quantity: 1,
-                          })
-                        }
-                      >
-                        <PlusIcon className="w-2 h-2" />
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="aspect-square"
+                          size="icon"
+                        >
+                          <EllipsisIcon className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-72">
+                        <div className="flex items-center justify-between gap-2 p-2">
+                          <span className="text-sm font-medium text-muted-foreground">
+                            Quantity :{" "}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              className="w-8 h-8"
+                              variant="outline"
+                              size="icon"
+                              onClick={() =>
+                                handleDecreaseQuantity({
+                                  productId: product.productId._id,
+                                  quantity: 1,
+                                })
+                              }
+                              disabled={product.quantity === 1}
+                            >
+                              <MinusIcon className="w-2 h-2" />
+                            </Button>
+                            <span>{product.quantity}</span>
+                            <Button
+                              className="w-8 h-8"
+                              variant="outline"
+                              size="icon"
+                              onClick={() =>
+                                handleIncreaseQuantity({
+                                  productId: product.productId._id,
+                                  quantity: 1,
+                                })
+                              }
+                            >
+                              <PlusIcon className="w-2 h-2" />
+                            </Button>
+                          </div>
+                          |
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                className="w-8 h-8"
+                                size="icon"
+                              >
+                                <TrashIcon className="w-2 h-2" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure you want to remove this product?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  (Product) : {product.productId.title}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() =>
+                                    handleRemoveProductFromCart({
+                                      productId: product.productId._id,
+                                    })
+                                  }
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </li>
                 ))}
               </ul>
             ) : (
-              <Skeleton>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                    <div>
-                      <div className="w-24 h-4 bg-gray-200 rounded"></div>
-                      <div className="w-16 h-3 bg-gray-200 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-                    <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-                    <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-                  </div>
-                </div>
-              </Skeleton>
+              <div className="flex items-center justify-center h-full">
+                <span className="text-muted-foreground">
+                  Your cart is empty!
+                </span>
+              </div>
             )}
           </div>
           <Separator className="mb-4" />
@@ -189,7 +317,7 @@ function ShoppingCart() {
                 <span className="text-lg font-semibold">
                   {total > 0 ? (
                     <span>
-                      {subtotal.toLocaleString("en-US", {
+                      {total.toLocaleString("en-US", {
                         style: "currency",
                         currency: "USD",
                       })}

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { shoppingProductSortOptions } from "@/config";
 import {
+  closeProductDetailsDialog,
   fetchFilteredProducts,
   fetchProductDetails,
 } from "@/store/shop/ProductSlice";
@@ -18,6 +19,7 @@ import { useEffect, useState } from "react";
 import ShoppingProductCard from "@/components/shopping/product-card";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
+import Pagination from "@/components/common/pagination";
 
 function ShoppingListing() {
   const { products, product } = useSelector((state) => state.shopProducts);
@@ -30,6 +32,9 @@ function ShoppingListing() {
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limitProductsPerPage = 5;
 
   // update url based on filters and sort state changes
   useEffect(() => {
@@ -55,8 +60,17 @@ function ShoppingListing() {
   // fetch products based on filters and sort
   useEffect(() => {
     dispatch(
-      fetchFilteredProducts({ filtersParams: filters, sortParams: sort })
-    );
+      fetchFilteredProducts({
+        filtersParams: filters,
+        sortParams: sort,
+        page: currentPage,
+        limit: limitProductsPerPage,
+      })
+    ).then((response) => {
+      setTotalPages(
+        Math.ceil(response.payload.totalProducts / limitProductsPerPage)
+      );
+    });
   }, [dispatch, filters, sort]);
 
   // Show product details dialog
@@ -66,6 +80,10 @@ function ShoppingListing() {
 
   function handleSort(value) {
     setSort(value);
+  }
+
+  function handlePageChange(page) {
+    setCurrentPage(page);
   }
 
   function handleFilter(section, optionValue) {
@@ -83,6 +101,11 @@ function ShoppingListing() {
 
   function handleGetProductDetails(productId) {
     dispatch(fetchProductDetails(productId));
+  }
+
+  function handleProductDetailsDialogClose() {
+    setOpenDetailsDialog(false);
+    dispatch(closeProductDetailsDialog());
   }
 
   return (
@@ -128,25 +151,33 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-          {products.length > 0 ? (
-            products.map((product) => (
-              <ShoppingProductCard
-                key={product._id}
-                product={product}
-                handleGetProductDetails={handleGetProductDetails}
-              />
-            ))
-          ) : (
-            <div className="text-center text-muted-foreground">
-              No products found
-            </div>
-          )}
+        <div className="">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {products.length > 0 ? (
+              products.map((product) => (
+                <ShoppingProductCard
+                  key={product._id}
+                  product={product}
+                  handleGetProductDetails={handleGetProductDetails}
+                />
+              ))
+            ) : (
+              <div className="text-center text-muted-foreground">
+                No products found
+              </div>
+            )}
+          </div>
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
       <ProductDetailsDialog
         isOpen={openDetailsDialog}
-        setOpen={setOpenDetailsDialog}
+        setOpen={handleProductDetailsDialogClose}
         productDetails={product}
       />
     </div>

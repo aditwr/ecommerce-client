@@ -109,4 +109,41 @@ export const increaseCartProductQuantityThunk = createAsyncThunk(
   }
 );
 
+export const decreaseCartProductQuantityThunk = createAsyncThunk(
+  "cart/decreaseCartProductQuantity",
+  async ({ userId, productId, quantity }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/shop/cart/decrease",
+        {
+          userId,
+          productId,
+          quantity,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
+export const removeProductFromCartThunk = createAsyncThunk(
+  "cart/removeProductFromCart",
+  async ({ userId, productId }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/shop/cart/remove",
+        {
+          userId,
+          productId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
 export default cartSlice.reducer;

@@ -11,7 +11,11 @@ const initialState = {
 const shopProductSlice = createSlice({
   name: "shopProduct",
   initialState,
-  reducers: {},
+  reducers: {
+    closeProductDetailsDialog: (state) => {
+      state.product = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchFilteredProducts.pending, (state) => {
       state.loading = true;
@@ -43,7 +47,7 @@ const shopProductSlice = createSlice({
 
 export const fetchFilteredProducts = createAsyncThunk(
   "shopProduct/fetchFilteredProducts",
-  async ({ filtersParams, sortParams }) => {
+  async ({ filtersParams, sortParams, page, limit }) => {
     // make a query string based on filters
     let query = new URLSearchParams();
     Object.keys(filtersParams).forEach((key) => {
@@ -56,6 +60,8 @@ export const fetchFilteredProducts = createAsyncThunk(
       });
     });
     query.set("sort", sortParams);
+    query.set("page", page);
+    query.set("limit", limit);
 
     const response = await axios.get(
       `http://localhost:5000/api/shop/products?${query.toString()}`
@@ -73,5 +79,7 @@ export const fetchProductDetails = createAsyncThunk(
     return response.data;
   }
 );
+
+export const { closeProductDetailsDialog } = shopProductSlice.actions;
 
 export default shopProductSlice.reducer;
