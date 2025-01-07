@@ -21,9 +21,10 @@ export const addNewProduct = createAsyncThunk(
 // thunk is a function that takes a string and a callback function as arguments
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAll",
-  async () => {
+  async ({ page, limit }) => {
+    const query = new URLSearchParams({ page, limit });
     const response = await axios.get(
-      "http://localhost:5000/api/admin/products/get"
+      `http://localhost:5000/api/admin/products/get?${query.toString()}`
     );
     return response.data;
   }

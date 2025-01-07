@@ -54,11 +54,19 @@ const ShoppingHome = () => {
   const banners = [banner1, banner2, banner3];
   const [currentBanner, setCurrentBanner] = useState(0);
   const { products } = useSelector((state) => state.shopProducts);
+  console.log(products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchFilteredProducts({ filtersParams: {}, sortParams: "" }));
+    dispatch(
+      fetchFilteredProducts({
+        filtersParams: {},
+        sortParams: "",
+        page: 1,
+        limit: 8,
+      })
+    );
   }, []);
 
   useEffect(() => {
@@ -87,7 +95,7 @@ const ShoppingHome = () => {
   return (
     <Fragment>
       {/* Hero */}
-      <section id="hero">
+      <section id="hero" className="mt-12">
         <div className="relative z-10 w-full h-[70vh] bg-blue-50">
           <div className="container relative z-10 flex items-center w-full h-full mx-auto">
             <div className="">
@@ -164,7 +172,7 @@ const ShoppingHome = () => {
             products.map((product) => (
               <div
                 key={product._id}
-                className="hover:cursor-pointer"
+                className="bg-red-100 hover:cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
               >
                 <ShoppingProductCard product={product} />

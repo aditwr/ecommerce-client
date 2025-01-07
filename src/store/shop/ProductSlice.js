@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setFiltersToQuery } from "@/utils/shop-utils";
 
 const initialState = {
   products: [],
@@ -50,15 +51,7 @@ export const fetchFilteredProducts = createAsyncThunk(
   async ({ filtersParams, sortParams, page, limit }) => {
     // make a query string based on filters
     let query = new URLSearchParams();
-    Object.keys(filtersParams).forEach((key) => {
-      filtersParams[key].forEach((value) => {
-        if (query.has(key)) {
-          query.set(key, `${query.get(key)}, ${value}`);
-        } else {
-          query.set(key, value);
-        }
-      });
-    });
+    query = setFiltersToQuery(query, filtersParams);
     query.set("sort", sortParams);
     query.set("page", page);
     query.set("limit", limit);

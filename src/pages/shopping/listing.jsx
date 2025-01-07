@@ -20,6 +20,8 @@ import ShoppingProductCard from "@/components/shopping/product-card";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
 import Pagination from "@/components/common/pagination";
+import { setFiltersToQuery } from "@/utils/shop-utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function ShoppingListing() {
   const { products, product } = useSelector((state) => state.shopProducts);
@@ -32,29 +34,32 @@ function ShoppingListing() {
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) ||
+      parseInt(sessionStorage.getItem("page")) ||
+      1
+  );
   const [totalPages, setTotalPages] = useState(1);
-  const limitProductsPerPage = 5;
+  const limitProductsPerPage = 10;
 
   // update url based on filters and sort state changes
   useEffect(() => {
-    const params = new URLSearchParams();
-    Object.keys(filters).forEach((key) => {
-      filters[key].forEach((value) => {
-        // append multiple values for same key without duplication
-        if (params.has(key)) {
-          params.set(key, `${params.get(key)},${value}`);
-        } else {
-          params.set(key, value);
-        }
-      });
-    });
+    let params = new URLSearchParams();
+    params = setFiltersToQuery(params, filters);
     params.set("sort", sort);
+    params.set("page", currentPage);
     setSearchParams(params.toString());
 
     // save filters and sort in session storage
     sessionStorage.setItem("filters", JSON.stringify(filters));
     sessionStorage.setItem("sort", sort);
+    sessionStorage.setItem("page", currentPage);
+  }, [filters, sort, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [filters, sort]);
 
   // fetch products based on filters and sort
@@ -67,11 +72,13 @@ function ShoppingListing() {
         limit: limitProductsPerPage,
       })
     ).then((response) => {
-      setTotalPages(
-        Math.ceil(response.payload.totalProducts / limitProductsPerPage)
-      );
+      if (response.payload) {
+        setTotalPages(
+          Math.ceil(response.payload.totalProducts / limitProductsPerPage)
+        );
+      }
     });
-  }, [dispatch, filters, sort]);
+  }, [dispatch, filters, sort, currentPage]);
 
   // Show product details dialog
   useEffect(() => {
@@ -109,7 +116,7 @@ function ShoppingListing() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
+    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6 mt-12">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
       <div className="w-full rounded-lg shadow-sm bg-background">
         <div className="flex items-center justify-between p-4 border-b">
@@ -151,7 +158,7 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        <div className="">
+        <div className="pb-6">
           <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {products.length > 0 ? (
               products.map((product) => (

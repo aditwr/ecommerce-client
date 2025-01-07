@@ -28,8 +28,6 @@ function App() {
     (state) => state.auth
   );
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.auth);
-  const { cart } = useSelector((state) => state.cart);
 
   // Check if user is authenticated with jwt token in cookies
   // If authenticated, decode the token and get user data
@@ -41,7 +39,9 @@ function App() {
   // Get cart data of the user if authenticated from the server
   // store the cart data in redux store
   useEffect(() => {
-    if (user) dispatch(getCartDataThunk(user.id));
+    if (user?.role === "user") {
+      dispatch(getCartDataThunk(user.id));
+    }
   }, [user]);
 
   if (isLoading) {

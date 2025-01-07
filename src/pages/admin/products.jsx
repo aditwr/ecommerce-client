@@ -18,6 +18,7 @@ import {
 } from "@/store/admin/products-slice";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Pagination from "@/components/common/pagination";
 
 const initialFormData = {
   image: "",
@@ -44,10 +45,23 @@ const AdminProducts = () => {
 
   const dispatch = useDispatch();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limitProductsPerPage = 5;
+
   // mount
   useEffect(() => {
-    dispatch(fetchAllProducts());
-  }, [dispatch]);
+    dispatch(
+      fetchAllProducts({ page: currentPage, limit: limitProductsPerPage })
+    ).then((response) => {
+      if (response?.payload?.success) {
+        setTotalPages(
+          Math.ceil(response.payload.totalDocuments / limitProductsPerPage)
+        );
+      }
+    });
+  }, [currentPage]);
 
   useEffect(() => {
     if (uploadedImageUrl) {
@@ -173,7 +187,7 @@ const AdminProducts = () => {
           {isLoading ? (
             <p>Loading...</p>
           ) : productList.length !== 0 ? (
-            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid h-full gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {productList.map((product) => (
                 <AdminProductCard
                   key={product._id}
@@ -188,6 +202,13 @@ const AdminProducts = () => {
           ) : (
             <p>No products found</p>
           )}
+        </div>
+        <div className="mt-6">
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </Fragment>

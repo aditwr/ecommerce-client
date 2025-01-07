@@ -30,7 +30,7 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
   return (
     <Card
       onClick={() => handleGetProductDetails(product._id)}
-      className="w-full max-w-sm mz-auto"
+      className="w-full h-full max-w-sm mz-auto"
     >
       <div className="">
         <CardHeader className="relative p-0">
