@@ -54,7 +54,6 @@ const ShoppingHome = () => {
   const banners = [banner1, banner2, banner3];
   const [currentBanner, setCurrentBanner] = useState(0);
   const { products } = useSelector((state) => state.shopProducts);
-  console.log(products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

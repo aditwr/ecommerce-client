@@ -13,7 +13,7 @@ import {
   fetchProductDetails,
 } from "@/store/shop/ProductSlice";
 import { DropdownMenuRadioGroup } from "@radix-ui/react-dropdown-menu";
-import { ArrowUpDownIcon } from "lucide-react";
+import { ArrowUpDownIcon, SearchIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import ShoppingProductCard from "@/components/shopping/product-card";
@@ -21,19 +21,24 @@ import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
 import Pagination from "@/components/common/pagination";
 import { setFiltersToQuery } from "@/utils/shop-utils";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ShoppingListing() {
-  const { products, product } = useSelector((state) => state.shopProducts);
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { products, product } = useSelector((state) => state.shopProducts);
+  const [search, setSearch] = useState(
+    searchParams.get("search") || sessionStorage.getItem("search") || ""
+  );
   const [filters, setFilters] = useState(
     JSON.parse(sessionStorage.getItem("filters")) || {}
   );
   const [sort, setSort] = useState(
     sessionStorage.getItem("sort") || shoppingProductSortOptions[0].id
   );
-  const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(
@@ -42,34 +47,41 @@ function ShoppingListing() {
       1
   );
   const [totalPages, setTotalPages] = useState(1);
-  const limitProductsPerPage = 10;
+  const limitProductsPerPage = 5;
 
-  // update url based on filters and sort state changes
+  // Update url based on related state changes
   useEffect(() => {
     let params = new URLSearchParams();
     params = setFiltersToQuery(params, filters);
-    params.set("sort", sort);
-    params.set("page", currentPage);
+    if (sort) params.set("sort", sort);
+    if (currentPage) params.set("page", currentPage);
+    if (search.length > 0) params.set("search", search);
+
     setSearchParams(params.toString());
 
     // save filters and sort in session storage
     sessionStorage.setItem("filters", JSON.stringify(filters));
     sessionStorage.setItem("sort", sort);
     sessionStorage.setItem("page", currentPage);
-  }, [filters, sort, currentPage]);
+    sessionStorage.setItem("search", search);
+  }, [filters, sort, currentPage, search]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, sort]);
 
+  useEffect(() => {}, [search]);
+
   // fetch products based on filters and sort
   useEffect(() => {
+    setLoading(true);
     dispatch(
       fetchFilteredProducts({
         filtersParams: filters,
         sortParams: sort,
         page: currentPage,
         limit: limitProductsPerPage,
+        search: search,
       })
     ).then((response) => {
       if (response.payload) {
@@ -77,6 +89,7 @@ function ShoppingListing() {
           Math.ceil(response.payload.totalProducts / limitProductsPerPage)
         );
       }
+      setLoading(false);
     });
   }, [dispatch, filters, sort, currentPage]);
 
@@ -115,16 +128,53 @@ function ShoppingListing() {
     dispatch(closeProductDetailsDialog());
   }
 
+  function handleSearch() {
+    setLoading(true);
+    dispatch(
+      fetchFilteredProducts({
+        filtersParams: filters,
+        sortParams: sort,
+        page: 1,
+        limit: limitProductsPerPage,
+        search: search,
+      })
+    ).then((response) => {
+      if (response.payload) {
+        setCurrentPage(1);
+        setTotalPages(
+          Math.ceil(response.payload.totalProducts / limitProductsPerPage)
+        );
+      }
+      setLoading(false);
+    });
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6 mt-12">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
       <div className="w-full rounded-lg shadow-sm bg-background">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-bold">All Products</h2>
+          {/* Search */}
+          <div className="">
+            <div className="flex items-center w-full sm:w-[400px] lg:w-[500px] space-x-2">
+              <Input
+                type="text"
+                placeholder="Search Collections"
+                onChange={(e) => setSearch(e.target.value)}
+                value={search}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button
+                type="submit"
+                className="flex space-x-2"
+                onClick={handleSearch}
+              >
+                <SearchIcon /> Search
+              </Button>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground">
-              {products.length} products
-            </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -160,7 +210,16 @@ function ShoppingListing() {
         </div>
         <div className="pb-6">
           <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {products.length > 0 ? (
+            {loading ? (
+              Array.from({ length: 10 }).map((_, index) => (
+                <div key={index} className="w-full h-full max-w-sm mz-auto">
+                  <Skeleton className="w-full aspect-square" />
+                  <Skeleton className="w-full h-4 mt-2" />
+                  <Skeleton className="w-1/2 h-4 mt-2" />
+                  <Skeleton className="w-1/3 h-6 mt-2" />
+                </div>
+              ))
+            ) : products?.length > 0 ? (
               products.map((product) => (
                 <ShoppingProductCard
                   key={product._id}

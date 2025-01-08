@@ -48,13 +48,14 @@ const shopProductSlice = createSlice({
 
 export const fetchFilteredProducts = createAsyncThunk(
   "shopProduct/fetchFilteredProducts",
-  async ({ filtersParams, sortParams, page, limit }) => {
+  async ({ filtersParams, sortParams, page, limit, search }) => {
     // make a query string based on filters
     let query = new URLSearchParams();
     query = setFiltersToQuery(query, filtersParams);
     query.set("sort", sortParams);
     query.set("page", page);
     query.set("limit", limit);
+    if (search) query.set("search", search);
 
     const response = await axios.get(
       `http://localhost:5000/api/shop/products?${query.toString()}`
