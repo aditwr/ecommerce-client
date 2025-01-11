@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import CryptoJS from "crypto-js";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const DATA_ENCRYPTION_KEY =
+  import.meta.env.VITE_DATA_ENCRYPTION_KEY || "some-secret-key";
 
 const initialState = {
   isAuthenticated: false,
@@ -11,7 +17,7 @@ export const registerUserThunk = createAsyncThunk(
   "/auth/register",
   async (formData) => {
     const response = await axios.post(
-      "http://localhost:5000/api/auth/register",
+      `${API_BASE_URL}/auth/register`,
       formData,
       { withCredentials: true }
     );
@@ -21,31 +27,42 @@ export const registerUserThunk = createAsyncThunk(
 export const loginUserThunk = createAsyncThunk(
   "/auth/login",
   async (formData) => {
+    // encrypt the password before sending it to the server
+    const encryptedEmail = CryptoJS.AES.encrypt(
+      formData.email,
+      DATA_ENCRYPTION_KEY
+    ).toString();
+    const encryptedPassword = CryptoJS.AES.encrypt(
+      formData.password,
+      DATA_ENCRYPTION_KEY
+    ).toString();
+
     const response = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      formData,
-      { withCredentials: true }
+      `${API_BASE_URL}/auth/login`,
+      {
+        email: encryptedEmail,
+        password: encryptedPassword,
+      },
+      {
+        withCredentials: true,
+      }
     );
     return response.data;
   }
 );
 export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
-  const response = await axios.get(
-    "http://localhost:5000/api/auth/check-auth",
-    {
-      withCredentials: true,
-      headers: {
-        "Cache-Control":
-          "no-cache, no-store, must-revalidate, proxy-revalidate",
-      },
-    }
-  );
+  const response = await axios.get(`${API_BASE_URL}/auth/check-auth`, {
+    withCredentials: true,
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate, proxy-revalidate",
+    },
+  });
   return response.data;
 });
 
 export const logoutUserThunk = createAsyncThunk("/auth/logout", async () => {
   const response = await axios.post(
-    "http://localhost:5000/api/auth/logout",
+    `${API_BASE_URL}/auth/logout`,
     {}, // post method requires a body, so we pass an empty object
     {
       withCredentials: true,
@@ -53,6 +70,54 @@ export const logoutUserThunk = createAsyncThunk("/auth/logout", async () => {
   );
   return response.data;
 });
+
+export const updateUserThunk = createAsyncThunk(
+  "/auth/update",
+  async (formData) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/account/update-profile`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+);
+
+export const resetPasswordThunk = createAsyncThunk(
+  "/auth/resetpassword",
+  async ({ oldPassword, newPassword }) => {
+    try {
+      const encryptedOldPassword = CryptoJS.AES.encrypt(
+        oldPassword,
+        DATA_ENCRYPTION_KEY
+      ).toString();
+      const encryptedNewPassword = CryptoJS.AES.encrypt(
+        newPassword,
+        DATA_ENCRYPTION_KEY
+      ).toString();
+
+      const response = await axios.put(
+        `${API_BASE_URL}/account/change-password`,
+        {
+          oldPassword: encryptedOldPassword,
+          newPassword: encryptedNewPassword,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
