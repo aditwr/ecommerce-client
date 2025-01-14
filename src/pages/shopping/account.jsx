@@ -4,6 +4,7 @@ import { useAuthenticatedUser } from "@/context/AuthenticatedUserContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPinIcon, ShoppingBagIcon, UserRoundCogIcon } from "lucide-react";
 import AccountProfile from "@/components/shopping/account/account-profile";
+import AddressSection from "@/components/shopping/address/address";
 
 const ShoppingAccount = () => {
   const user = useAuthenticatedUser();
@@ -65,7 +66,7 @@ const ShoppingAccount = () => {
             <h1 className="">Content 1</h1>
           </TabsContent>
           <TabsContent value="address">
-            <h1 className="">Content 2</h1>
+            <AddressSection />
           </TabsContent>
           <TabsContent value="profile">
             <div className="p-4 border rounded-md">
