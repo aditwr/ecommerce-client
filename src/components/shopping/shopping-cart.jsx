@@ -53,13 +53,14 @@ import {
   removeProductFromCartThunk,
 } from "@/store/shop/CartSlice";
 import { Badge } from "../ui/badge";
+import { useNavigate } from "react-router-dom";
 
 function ShoppingCart() {
   const { cart } = useSelector((state) => state.cart);
-
   const { user } = useSelector((state) => state.auth);
   const { toast } = useToast();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function handleIncreaseQuantity({ productId, quantity }) {
     dispatch(
@@ -110,6 +111,16 @@ function ShoppingCart() {
   }
   let shippingCost = 10;
   let total = subtotal + shippingCost;
+
+  function handleCheckout() {
+    if (cart.products.length > 0) {
+      navigate("/shop/checkout");
+    } else {
+      toast({
+        title: "Your cart is empty!",
+      });
+    }
+  }
 
   return (
     <Sheet className="w-full h-full">
@@ -336,7 +347,9 @@ function ShoppingCart() {
         </div>
         <SheetFooter className="flex flex-col gap-4 mt-4">
           <SheetClose asChild>
-            <Button className="w-full">Checkout</Button>
+            <Button className="w-full" onClick={handleCheckout}>
+              Checkout
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

@@ -19,7 +19,7 @@ const cartSlice = createSlice({
       })
       .addCase(addProductToCartThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.cart = action.payload.data;
+        state.cart = action?.payload?.data ?? [];
       })
       .addCase(addProductToCartThunk.rejected, (state, action) => {
         state.loading = false;
@@ -33,7 +33,7 @@ const cartSlice = createSlice({
       })
       .addCase(getCartDataThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.cart = action.payload.data;
+        state.cart = action?.payload?.data ?? [];
       })
       .addCase(getCartDataThunk.rejected, (state, action) => {
         state.loading = false;
@@ -47,7 +47,7 @@ const cartSlice = createSlice({
       })
       .addCase(increaseCartProductQuantityThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.cart = action.payload.data;
+        state.cart = action?.payload?.data ?? [];
       })
       .addCase(increaseCartProductQuantityThunk.rejected, (state, action) => {
         state.loading = false;
@@ -68,7 +68,6 @@ export const addProductToCartThunk = createAsyncThunk(
           quantity,
         }
       );
-      // console.log(response); // {data: {…}, status: 200, statusText: "OK", headers: {…}, config: {…}, …}
       return response.data;
     } catch (error) {
       console.error(error);
@@ -85,7 +84,7 @@ export const getCartDataThunk = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error(error);
+      return error.response.data;
     }
   }
 );

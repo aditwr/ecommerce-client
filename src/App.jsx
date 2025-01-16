@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Router } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
@@ -22,6 +22,8 @@ import { checkAuthThunk } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
 import { getCartDataThunk } from "./store/shop/CartSlice";
 import { AuthenticatedUserProvider } from "./context/AuthenticatedUserContext";
+import PaypalReturnPage from "./pages/shopping/paypal-return";
+import PaymentSuccessPage from "./pages/shopping/payment-success";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -40,7 +42,13 @@ function App() {
   // store the cart data in redux store
   useEffect(() => {
     if (user?.role === "user") {
-      dispatch(getCartDataThunk(user.id));
+      dispatch(getCartDataThunk(user.id)).then((action) => {
+        if (action?.payload?.success) {
+          console.log(action?.payload?.message);
+        } else {
+          console.log(action?.payload?.message);
+        }
+      });
     }
   }, [user]);
 
@@ -90,12 +98,13 @@ function App() {
               <Route path="listing" element={<ShoppingListing />} />
               <Route path="checkout" element={<ShoppingCheckout />} />
               <Route path="account" element={<ShoppingAccount />} />
+              <Route path="paypal-return" element={<PaypalReturnPage />} />
+              <Route path="payment-success" element={<PaymentSuccessPage />} />
             </Route>
             <Route path="unauth" element={<UnAuthPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-        \
       </AuthenticatedUserProvider>
       <Toaster />
     </>

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPinIcon, ShoppingBagIcon, UserRoundCogIcon } from "lucide-react";
 import AccountProfile from "@/components/shopping/account/account-profile";
 import AddressSection from "@/components/shopping/address/address";
+import ShoppingOrdersIndex from "./orders";
 
 const ShoppingAccount = () => {
   const user = useAuthenticatedUser();
@@ -63,7 +64,7 @@ const ShoppingAccount = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="orders">
-            <h1 className="">Content 1</h1>
+            <ShoppingOrdersIndex />
           </TabsContent>
           <TabsContent value="address">
             <AddressSection />
