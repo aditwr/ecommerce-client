@@ -7,6 +7,8 @@ const initialState = {
   approvalURL: null,
   isLoading: false,
   orderId: null,
+  orders: [],
+  order: null,
 };
 
 export const createNewOrder = createAsyncThunk(
@@ -50,6 +52,19 @@ export const capturePayment = createAsyncThunk(
   }
 );
 
+export const getOrdersByUserId = createAsyncThunk(
+  "shoppingOrder/getOrders",
+  async (userId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/shop/order/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.log("Error in getOrdersByUserId", error);
+      return error.response.data;
+    }
+  }
+);
+
 const shoppingOrderSlice = createSlice({
   name: "shoppingOrder",
   initialState,
@@ -81,6 +96,19 @@ const shoppingOrderSlice = createSlice({
         state.isLoading = false;
         state.approvalURL = null;
         state.orderId = null;
+      });
+
+    builder
+      .addCase(getOrdersByUserId.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOrdersByUserId.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orders = action.payload.data;
+      })
+      .addCase(getOrdersByUserId.rejected, (state) => {
+        state.isLoading = false;
+        state.orders = [];
       });
   },
 });
