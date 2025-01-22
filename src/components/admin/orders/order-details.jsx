@@ -15,7 +15,7 @@ import {
   SquareArrowOutUpRightIcon,
 } from "lucide-react";
 
-function ShoppingOrderDetails({ order }) {
+function AdminOrderDetails({ order }) {
   return (
     <Dialog className="text-foreground">
       <DialogTrigger>
@@ -91,6 +91,17 @@ function ShoppingOrderDetails({ order }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
                     <div className="col-span-1">
                       <table className="">
+                        <tr className="h-8 align-middle">
+                          <td className="w-32 text-xs font-medium">
+                            Ordered by
+                          </td>
+                          <td>:</td>
+                          <td className="px-1 text-xs font-medium rounded">
+                            <span className="line-clamp-1">
+                              {order?.user?.email}
+                            </span>
+                          </td>
+                        </tr>
                         <tr className="h-8 align-middle">
                           <td className="w-32 text-xs font-medium">Order ID</td>
                           <td>:</td>
@@ -209,4 +220,4 @@ function ShoppingOrderDetails({ order }) {
   );
 }
 
-export default ShoppingOrderDetails;
+export default AdminOrderDetails;

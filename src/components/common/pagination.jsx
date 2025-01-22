@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-function Pagination({ currentPage, totalPages, onPageChange }) {
+function Pagination({ currentPage, totalPages, onPageChange, className = "" }) {
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -51,41 +51,43 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   let pages = getPageNumbers();
 
   return (
-    <PaginationComponent>
-      <PaginationContent>
-        {currentPage !== 1 && (
-          <PaginationItem
-            className="hover:cursor-pointer"
-            onClick={() => onPageChange(currentPage - 1)}
-          >
-            <PaginationPrevious />
-          </PaginationItem>
-        )}
-        {pages.map((page, index) => (
-          <PaginationItem key={index}>
-            {page !== "..." ? (
-              <PaginationLink
-                className="hover:cursor-pointer"
-                isActive={currentPage === page}
-                onClick={() => onPageChange(page)}
-              >
-                {page}
-              </PaginationLink>
-            ) : (
-              <PaginationEllipsis />
-            )}
-          </PaginationItem>
-        ))}
-        {currentPage !== totalPages && (
-          <PaginationItem
-            className="hover:cursor-pointer"
-            onClick={() => onPageChange(currentPage + 1)}
-          >
-            <PaginationNext />
-          </PaginationItem>
-        )}
-      </PaginationContent>
-    </PaginationComponent>
+    <div className={className}>
+      <PaginationComponent>
+        <PaginationContent>
+          {currentPage !== 1 && (
+            <PaginationItem
+              className="hover:cursor-pointer"
+              onClick={() => onPageChange(currentPage - 1)}
+            >
+              <PaginationPrevious />
+            </PaginationItem>
+          )}
+          {pages.map((page, index) => (
+            <PaginationItem key={index}>
+              {page !== "..." ? (
+                <PaginationLink
+                  className="hover:cursor-pointer"
+                  isActive={currentPage === page}
+                  onClick={() => onPageChange(page)}
+                >
+                  {page}
+                </PaginationLink>
+              ) : (
+                <PaginationEllipsis />
+              )}
+            </PaginationItem>
+          ))}
+          {currentPage !== totalPages && (
+            <PaginationItem
+              className="hover:cursor-pointer"
+              onClick={() => onPageChange(currentPage + 1)}
+            >
+              <PaginationNext />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </PaginationComponent>
+    </div>
   );
 }
 

@@ -35,13 +35,11 @@ const ShoppingAccount = () => {
               className="object-cover w-full h-full"
             />
           </div>
-          <div className="space-y-1 text-center text-white">
-            <h2 className="px-2 text-xl font-bold rounded-full bg-foreground/50">
-              {user?.userName}
-            </h2>
-            <h5 className="px-2 text-sm font-medium rounded-full bg-foreground/50 text-background/100">
+          <div className="px-8 py-2 text-center bg-white rounded-md text-foreground">
+            <p className="text-sm font-bold">{user?.userName}</p>
+            <p className="text-xs italic font-medium text-foreground/80">
               {user?.email}
-            </h5>
+            </p>
           </div>
         </div>
       </div>
