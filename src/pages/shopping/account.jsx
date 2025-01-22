@@ -12,7 +12,7 @@ const ShoppingAccount = () => {
   // console.log(user);
 
   return (
-    <div className="container px-4 mx-auto mt-20">
+    <div className="container px-4 pb-20 mx-auto mt-20">
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Account</h1>
       </div>

@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
 } from "@/components/ui/dropdown-menu";
 import { shoppingProductSortOptions } from "@/config";
 import {
@@ -12,7 +13,6 @@ import {
   fetchFilteredProducts,
   fetchProductDetails,
 } from "@/store/shop/ProductSlice";
-import { DropdownMenuRadioGroup } from "@radix-ui/react-dropdown-menu";
 import { ArrowUpDownIcon, SearchIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";

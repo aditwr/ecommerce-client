@@ -144,3 +144,8 @@ export const shoppingProductSortOptions = [
   { id: "title-ascending", label: "Title: A-Z" },
   { id: "title-descending", label: "Title: Z-A" },
 ];
+
+export const orderListSortOptions = [
+  { id: "newest", label: "Newest" },
+  { id: "oldest", label: "Oldest" },
+];

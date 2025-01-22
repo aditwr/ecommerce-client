@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getOrdersByUserId } from "@/store/shop/OrderSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
@@ -20,28 +20,85 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BoxIcon, PhoneIcon, SquareArrowOutUpRightIcon } from "lucide-react";
+import {
+  ArrowUpDownIcon,
+  BoxIcon,
+  PhoneIcon,
+  SquareArrowOutUpRightIcon,
+} from "lucide-react";
+import ShoppingOrderDetails from "@/components/shopping/account/order-details";
+import Pagination from "@/components/common/pagination";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+} from "@/components/ui/dropdown-menu";
+import { orderListSortOptions } from "@/config";
 
 function ShoppingOrdersIndex() {
   const { user } = useSelector((state) => state.auth);
   const { orders } = useSelector((state) => state.shopOrder);
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [sort, setSort] = useState("newest");
 
   // get the orders of this user
   useEffect(() => {
     if (user) {
-      dispatch(getOrdersByUserId(user.id)).then((action) => {
-        // console.log("action", action);
-      });
+      dispatch(getOrdersByUserId({ userId: user.id, page, limit, sort })).then(
+        (action) => {
+          if (action?.payload?.success) {
+            let totalPages = Math.ceil(action?.payload?.countDocuments / limit);
+            setTotalPages(totalPages);
+          }
+        }
+      );
     }
-  }, []);
+  }, [dispatch, user, page, sort, totalPages, limit]);
+
+  function handleSort(value) {
+    setSort(value);
+  }
 
   return (
     <div className="p-4 border rounded-md">
       <div className="flex items-baseline w-full jusitfy-center">
         <h2 className="text-lg font-semibold">Orders</h2>
-        <span className="ml-auto text-sm text-primary">View All</span>
+        <div className="ml-auto text-sm text-primary">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1"
+              >
+                <ArrowUpDownIcon className="w-4 h-4" />
+                <span className="">
+                  {orderListSortOptions.map(
+                    (sortItem) => sortItem.id === sort && sortItem.label
+                  )}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuRadioGroup
+                value={sort}
+                onValueChange={(value) => handleSort(value)}
+              >
+                {orderListSortOptions.map((sortItem) => (
+                  <DropdownMenuRadioItem value={sortItem.id} key={sortItem.id}>
+                    {sortItem.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="">
         {orders.length > 0 ? (
@@ -107,21 +164,7 @@ function ShoppingOrdersIndex() {
                     }).format(order.totalAmount)}
                   </TableCell>
                   <TableCell>
-                    <Dialog>
-                      <DialogTrigger>
-                        <Button size="icon">
-                          <SquareArrowOutUpRightIcon size={16} />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-[600px]">
-                        <DialogHeader>
-                          <DialogTitle>Order Details</DialogTitle>
-                          <DialogDescription>
-                            <div className=""></div>
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
+                    <ShoppingOrderDetails order={order} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -134,6 +177,13 @@ function ShoppingOrdersIndex() {
             </h2>
           </div>
         )}
+
+        {/* pagination */}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(page) => setPage(page)}
+        />
       </div>
     </div>
   );

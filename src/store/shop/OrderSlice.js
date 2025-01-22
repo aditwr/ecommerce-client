@@ -54,9 +54,11 @@ export const capturePayment = createAsyncThunk(
 
 export const getOrdersByUserId = createAsyncThunk(
   "shoppingOrder/getOrders",
-  async (userId) => {
+  async ({ userId, page, limit, sort }) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/shop/order/${userId}`);
+      const response = await axios.get(
+        `${API_BASE_URL}/shop/order/${userId}/get?page=${page}&limit=${limit}&sort=${sort}`
+      );
       return response.data;
     } catch (error) {
       console.log("Error in getOrdersByUserId", error);
