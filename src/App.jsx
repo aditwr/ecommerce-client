@@ -24,6 +24,7 @@ import { getCartDataThunk } from "./store/shop/CartSlice";
 import { AuthenticatedUserProvider } from "./context/AuthenticatedUserContext";
 import PaypalReturnPage from "./pages/shopping/paypal-return";
 import PaymentSuccessPage from "./pages/shopping/payment-success";
+import AdminSecondLayout from "./components/admin/layout-two";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -77,7 +78,7 @@ function App() {
               path="/admin"
               element={
                 <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-                  <AdminLayout />
+                  <AdminSecondLayout />
                 </CheckAuth>
               }
             >

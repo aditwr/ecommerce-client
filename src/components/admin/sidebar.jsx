@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { BadgeCheck, LayoutDashboard, ShoppingBasket } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
-export const adminSidebarMenuItems = [
+const adminSidebarMenuItems = [
   {
     id: "dashboard",
     label: "Dashboard",
@@ -52,9 +52,9 @@ const AdminSidebar = ({ open, setOpen }) => {
   const navigate = useNavigate();
 
   return (
-    <Fragment>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-64">
+    <div className="">
+      <Sheet open={open} onOpenChange={setOpen} className="">
+        <SheetContent side="left" className="">
           <div className="flex flex-col h-full">
             <SheetHeader className="border-b">
               <SheetTitle className="flex gap-2 mb-5">
@@ -76,7 +76,7 @@ const AdminSidebar = ({ open, setOpen }) => {
         </div>
         <MenuItems />
       </aside>
-    </Fragment>
+    </div>
   );
 };
 

@@ -19,6 +19,7 @@ import {
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "@/components/common/pagination";
+import { BadgePlusIcon } from "lucide-react";
 
 const initialFormData = {
   image: "",
@@ -125,8 +126,12 @@ const AdminProducts = () => {
       <div className="w-full">
         <div className="w-full">
           <div className="flex justify-end w-full mb-5">
-            <Button onClick={() => setOpenCreateProductDialog(true)}>
-              Add New Product
+            <Button
+              className="flex gap-x-2"
+              onClick={() => setOpenCreateProductDialog(true)}
+            >
+              <BadgePlusIcon className="w-5 h-5" />
+              Add Product
             </Button>
           </div>
           <Sheet
@@ -183,32 +188,34 @@ const AdminProducts = () => {
           </Sheet>
         </div>
 
-        <div className="">
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : productList.length !== 0 ? (
-            <div className="grid h-full gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {productList.map((product) => (
-                <AdminProductCard
-                  key={product._id}
-                  {...product}
-                  setCurrentEditedId={setCurrentEditedId}
-                  setOpenCreateProductDialog={setOpenCreateProductDialog}
-                  setFormData={setFormData}
-                  handleDeleteProduct={handleDeleteProduct}
-                />
-              ))}
-            </div>
-          ) : (
-            <p>No products found</p>
-          )}
-        </div>
-        <div className="mt-6">
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
+        <div className="min-h-0 overflow-y-auto">
+          <div className="">
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : productList.length !== 0 ? (
+              <div className="grid h-full gap-4 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+                {productList.map((product) => (
+                  <AdminProductCard
+                    key={product._id}
+                    {...product}
+                    setCurrentEditedId={setCurrentEditedId}
+                    setOpenCreateProductDialog={setOpenCreateProductDialog}
+                    setFormData={setFormData}
+                    handleDeleteProduct={handleDeleteProduct}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>No products found</p>
+            )}
+          </div>
+          <div className="mt-6">
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </div>
       </div>
     </Fragment>
