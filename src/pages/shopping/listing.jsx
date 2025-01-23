@@ -150,7 +150,7 @@ function ShoppingListing() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6 mt-12">
+    <div className="grid relative grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6 mt-12">
       <ProductFilter filters={filters} handleFilter={handleFilter} />
       <div className="w-full rounded-lg shadow-sm bg-background">
         <div className="flex items-center justify-between p-4 border-b">

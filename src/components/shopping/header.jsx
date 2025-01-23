@@ -5,7 +5,7 @@ import {
   ShoppingCartIcon,
   UserCog,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
@@ -31,13 +31,19 @@ import {
 import ShoppingCart from "./shopping-cart";
 
 const MenuItems = () => {
+  const location = useLocation();
+
   return (
     <nav className="flex flex-col gap-6 mb-3 lg:mb-0 lg:items-center lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Link
           key={menuItem.id}
           to={menuItem.path}
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          className={`text-sm font-medium hover:text-gray-900 ${
+            location.pathname.includes(menuItem.path)
+              ? "text-gray-800"
+              : "text-gray-400"
+          }`}
         >
           {menuItem.label}
         </Link>
@@ -99,7 +105,7 @@ const ShoppingHeader = () => {
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         <Link to="/shop/home" className="flex items-center gap-2">
           <ShoppingBag className="w-6 h-6" />
-          <span className="font-bold">Ecommerce</span>
+          <span className="text-lg font-bold">FashionCommerce</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>

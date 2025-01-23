@@ -76,7 +76,7 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
                 });
               }}
               variant="secondary"
-              className="shadow"
+              className="shadow hover:bg-gray-800 hover:text-white transtition"
               size="sm"
             >
               <ShoppingCartIcon className="w-5 h-5" />
@@ -84,7 +84,9 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <h2 className="mb-2 text-xl font-semibold">{product?.title}</h2>
+          <h2 className="mb-2 text-base font-semibold 2xl:text-xl">
+            {product?.title}
+          </h2>
           <div className="flex items-center justify-start gap-2 mb-2">
             <span className="text-sm text-muted-foreground">
               <Badge>
@@ -108,23 +110,23 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
           <div className="flex items-center gap-x-4">
             {product?.salePrice > 0 ? (
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl font-semibold text-primary">
+                <span className="text-xl font-semibold 2xl:text-2xl text-primary">
                   ${product?.salePrice}
                 </span>
                 <span
-                  className={`text-lg font-semibold line-through text-muted-foreground`}
+                  className={`text-md font-normal line-through text-muted-foreground`}
                 >
                   ${product?.price}
                 </span>
               </div>
             ) : (
-              <span className="text-2xl font-semibold text-primary">
+              <span className="text-xl font-semibold 2xl:text-2xl text-primary">
                 ${product?.price}
               </span>
             )}
             <div className="flex items-center">
               {product?.totalStock > 0 ? (
-                <Badge variant="outline">
+                <Badge variant="outline" className="line-clamp-1">
                   {product?.totalStock} Pcs in stock
                 </Badge>
               ) : (

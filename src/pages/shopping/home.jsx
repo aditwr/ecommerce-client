@@ -40,7 +40,7 @@ const LandingSection = ({ id, title, description, children }) => {
   return (
     <section id={id} className="py-16 bg-gray-100">
       <div className="container mx-auto">
-        <div className="flex flex-col items-center justify-center mb-12">
+        <div className="flex flex-col items-center justify-center mb-8">
           <h1 className="text-3xl font-bold text-center">{title}</h1>
           <p className="text-lg text-center text-gray-500">{description}</p>
         </div>
@@ -137,22 +137,22 @@ const ShoppingHome = () => {
         title="Product Categories"
         description="Choose your favorite category"
       >
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
+        <div className="container grid grid-cols-2 gap-8 px-4 mx-auto md:grid-cols-4 lg:grid-cols-5">
           {ProductCategoriesArray.map((category) => (
             <div
               key={category.id}
-              className="box-content flex flex-col items-center justify-center px-4 py-6 bg-white border border-white rounded-lg cursor-pointer hover:border-neutral-200"
+              className="box-content flex flex-col items-center justify-center px-4 py-6 transition bg-white border border-white rounded-lg cursor-pointer group hover:bg-neutral-700 hover:text-white hover:border-neutral-200"
               onClick={() => handleSelectProductCategory(category.id)}
             >
-              <div className="flex justify-center w-full h-20 mb-4">
+              <div className="relative flex justify-center w-full h-20 mb-4">
                 <img
                   src={`/img/categories-img/${category.id}.svg`}
                   alt={category.id}
-                  className="object-cover w-auto h-full"
+                  className="absolute object-cover w-auto h-full transition-all duration-700 group-hover:-translate-y-10 group-hover:scale-150"
                 />
               </div>
               <h1 className="text-lg font-semibold">{category.label}</h1>
-              <p className="text-sm text-center text-gray-500">
+              <p className="text-sm text-center text-gray-500 group-hover:text-gray-200">
                 {category.description}
               </p>
             </div>
@@ -166,12 +166,12 @@ const ShoppingHome = () => {
         title="Featured Products"
         description="Check out our featured products"
       >
-        <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
           {products.length > 0 ? (
             products.map((product) => (
               <div
                 key={product._id}
-                className="bg-red-100 hover:cursor-pointer"
+                className="hover:shadow-2xl hover:cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
               >
                 <ShoppingProductCard product={product} />
