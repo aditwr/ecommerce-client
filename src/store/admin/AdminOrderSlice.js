@@ -10,7 +10,7 @@ const initialState = {
 
 export const fetchAllOrders = createAsyncThunk(
   "shoppingOrder/getAllOrders",
-  async ({ page, limit, sort }) => {
+  async ({ page = 1, limit = 10, sort = "newest" }) => {
     try {
       const response = await axios.get(
         `${API_BASE_URL}/admin/order/get?page=${page}&limit=${limit}&sort=${sort}`
@@ -18,6 +18,22 @@ export const fetchAllOrders = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log("Error in getAllOrders", error);
+      return error.response.data;
+    }
+  }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+  "shoppingOrder/updateOrderStatus",
+  async ({ orderId, orderStatus }) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/admin/order/update/${orderId}`,
+        { orderStatus }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error in updateOrderStatus", error);
       return error.response.data;
     }
   }

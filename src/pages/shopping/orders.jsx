@@ -128,19 +128,21 @@ function ShoppingOrdersIndex() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    {order.orderStatus == "confirmed" ? (
-                      <Badge className="text-green-900 bg-green-300 hover:bg-green-300">
-                        Confirmed
-                      </Badge>
-                    ) : order.orderStatus == "pending" ? (
-                      <Badge className="text-yellow-900 bg-yellow-300 hover:bg-yellow-300">
-                        Pending
-                      </Badge>
-                    ) : order.orderStatus == "cancelled" ? (
-                      <Badge className="text-red-900 bg-red-300 hover:bg-red-300">
-                        Cancelled
-                      </Badge>
-                    ) : null}
+                    <Badge
+                      {...(order?.orderStatus === "delivered"
+                        ? {
+                            className:
+                              "text-green-900 bg-green-300 hover:bg-green-300",
+                          }
+                        : order?.orderStatus === "cancelled"
+                        ? {
+                            className:
+                              "text-red-900 bg-red-300 hover:bg-red-300",
+                          }
+                        : { variant: "secondary" })}
+                    >
+                      {order?.orderStatus}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     {order.paymentStatus == "paid" ? (

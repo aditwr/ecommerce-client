@@ -20,6 +20,7 @@ import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "@/components/common/pagination";
 import { BadgePlusIcon } from "lucide-react";
+import { setBreadcrumb } from "@/store/breadcrumbSlice";
 
 const initialFormData = {
   image: "",
@@ -69,6 +70,16 @@ const AdminProducts = () => {
       setFormData({ ...formData, image: uploadedImageUrl });
     }
   }, [uploadedImageUrl]);
+
+  useEffect(() => {
+    dispatch(
+      setBreadcrumb({
+        level: 1,
+        label: "Products",
+        path: "/admin/products",
+      })
+    );
+  }, []);
 
   function isFormValid() {
     return Object.values(formData).every((value) => value !== "");
@@ -125,7 +136,10 @@ const AdminProducts = () => {
     <Fragment>
       <div className="w-full">
         <div className="w-full">
-          <div className="flex justify-end w-full mb-5">
+          <div className="flex items-center justify-between w-full mb-5">
+            <div className="">
+              <h1 className="text-lg font-semibold lg:text-xl">Products</h1>
+            </div>
             <Button
               className="flex gap-x-2"
               onClick={() => setOpenCreateProductDialog(true)}

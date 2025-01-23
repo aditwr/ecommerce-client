@@ -149,3 +149,13 @@ export const orderListSortOptions = [
   { id: "newest", label: "Newest" },
   { id: "oldest", label: "Oldest" },
 ];
+
+export const orderStatusOptions = [
+  { id: "confirmed", label: "Confirmed" },
+  { id: "pending", label: "Pending" },
+  { id: "cancelled", label: "Cancelled" },
+  { id: "processing", label: "Processing" },
+  { id: "shipping", label: "Shipping" },
+  { id: "delivered", label: "Delivered" },
+  { id: "completed", label: "Completed" },
+];

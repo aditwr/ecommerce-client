@@ -9,13 +9,52 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { orderStatusOptions } from "@/config/index";
+import { useToast } from "@/hooks/use-toast";
+import {
+  fetchAllOrders,
+  updateOrderStatus,
+} from "@/store/admin/AdminOrderSlice";
+
+import {
   PhoneIcon,
   Signpost,
   SignpostIcon,
   SquareArrowOutUpRightIcon,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-function AdminOrderDetails({ order }) {
+function AdminOrderDetails({ order, setShouldFetch }) {
+  const [orderStatus, setOrderStatus] = useState(order?.orderStatus);
+  const [canUpdateOrderStatus, setCanUpdateOrderStatus] = useState(false);
+  const { toast } = useToast();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setCanUpdateOrderStatus(orderStatus !== order?.orderStatus);
+  }, [orderStatus]);
+
+  const handleUpdateOrderStatus = () => {
+    dispatch(
+      updateOrderStatus({ orderId: order?._id, orderStatus: orderStatus })
+    ).then((action) => {
+      if (action?.payload?.success) {
+        setShouldFetch(true);
+        toast({
+          title: action?.payload?.message,
+        });
+      }
+    });
+  };
+
   return (
     <Dialog className="text-foreground">
       <DialogTrigger>
@@ -33,7 +72,7 @@ function AdminOrderDetails({ order }) {
                 <h2 className="mb-2 text-sm font-semibold text-foreground/90">
                   Ordered Products
                 </h2>
-                <div className="p-4 border border-gray-400 rounded-md">
+                <div className="p-4 border border-gray-300 rounded-md">
                   <div className="flex flex-col overflow-y-auto max-h-40 gap-y-4">
                     {order.products.map((product) => (
                       <div
@@ -41,7 +80,7 @@ function AdminOrderDetails({ order }) {
                         className="grid items-center grid-cols-8 gap-x-3"
                       >
                         <div className="col-span-1">
-                          <div className="h-full overflow-hidden border border-gray-400 rounded-md aspect-square">
+                          <div className="h-full overflow-hidden border border-gray-300 rounded-md aspect-square">
                             <img
                               src={product?.image}
                               alt={product?.title}
@@ -87,7 +126,7 @@ function AdminOrderDetails({ order }) {
                 <h2 className="mb-2 text-sm font-semibold text-foreground/90">
                   Order Info
                 </h2>
-                <div className="p-4 border border-gray-400 rounded-md ">
+                <div className="p-4 border border-gray-300 rounded-md ">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
                     <div className="col-span-1">
                       <table className="">
@@ -182,12 +221,12 @@ function AdminOrderDetails({ order }) {
                 <h2 className="mb-2 text-sm font-semibold text-foreground/90">
                   Shipping Address
                 </h2>
-                <div className="p-4 border border-gray-400 rounded-md ">
+                <div className="p-4 border border-gray-300 rounded-md ">
                   <div className="space-y-2">
                     <p className="">
                       {`${order?.address?.address}, ${order?.address?.city}, ${order?.address?.country}`}
                     </p>
-                    <div className="flex">
+                    <div className="flex gap-x-2">
                       <p className="text-foreground">
                         <Badge
                           className="flex items-center text-xs gap-x-2 "
@@ -208,6 +247,44 @@ function AdminOrderDetails({ order }) {
                           <span>{order?.address?.postalCode}</span>
                         </Badge>
                       </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3">
+                <h2 className="mb-2 text-sm font-semibold text-foreground/90">
+                  Order Actions
+                </h2>
+                <div className="p-4 border border-gray-300 rounded-md ">
+                  <div className="flex items-center gap-x-4">
+                    <p className="">Set Order Status to </p>
+                    <Select
+                      defaultValue={orderStatus}
+                      onValueChange={setOrderStatus}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {orderStatusOptions.map((status) => (
+                          <SelectItem
+                            key={status.id}
+                            value={status.id}
+                            onClick={() => setOrderStatus(status.id)}
+                          >
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="">
+                      <Button
+                        {...(canUpdateOrderStatus ? {} : { disabled: true })}
+                        onClick={handleUpdateOrderStatus}
+                        size="sm"
+                      >
+                        Save
+                      </Button>
                     </div>
                   </div>
                 </div>

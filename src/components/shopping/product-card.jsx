@@ -13,15 +13,34 @@ import { useToast } from "@/hooks/use-toast";
 function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
   const { toast } = useToast();
 
-  const handleAddProductToCart = ({ userId, productId, quantity }) => {
+  const handleAddProductToCart = ({
+    userId,
+    productId,
+    quantity,
+    totalStock,
+  }) => {
+    // cart.products & productId
+    let productInCart = cart.products.find(
+      (product) => product.productId._id === productId
+    );
+    if (productInCart) {
+      const currentQtyInCart = productInCart?.quantity;
+      if (currentQtyInCart === totalStock) {
+        toast({
+          title: `Only ${totalStock} Pcs in stock, you can't add more`,
+        });
+        return; // Exit the function
+      }
+    }
+
     dispatch(addProductToCartThunk({ userId, productId, quantity }))
       .then(() => {
         toast({
           title: "Product added to cart",
           description: "Check your cart to view the product",
-          type: "success",
         });
       })
       .then(() => dispatch(getCartDataThunk(userId)));
@@ -46,12 +65,14 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
           )}
           <div className="absolute top-2 right-2">
             <Button
+              {...{ disabled: product?.totalStock === 0 }}
               onClick={(e) => {
                 e.stopPropagation();
                 handleAddProductToCart({
                   userId: user.id,
-                  productId: product._id,
+                  productId: product?._id,
                   quantity: 1,
+                  totalStock: product?.totalStock,
                 });
               }}
               variant="secondary"
@@ -84,21 +105,32 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
               </Badge>
             </span>
           </div>
-          <div className="flex items-center gap-2 mb-2">
-            {product?.salePrice > 0 && (
+          <div className="flex items-center gap-x-4">
+            {product?.salePrice > 0 ? (
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl font-semibold text-primary">
+                  ${product?.salePrice}
+                </span>
+                <span
+                  className={`text-lg font-semibold line-through text-muted-foreground`}
+                >
+                  ${product?.price}
+                </span>
+              </div>
+            ) : (
               <span className="text-2xl font-semibold text-primary">
-                ${product?.salePrice}
+                ${product?.price}
               </span>
             )}
-            <span
-              className={`text-lg font-semibold ${
-                product?.salePrice > 0
-                  ? "line-through text-muted-foreground"
-                  : "text-primary"
-              }`}
-            >
-              ${product?.price}
-            </span>
+            <div className="flex items-center">
+              {product?.totalStock > 0 ? (
+                <Badge variant="outline">
+                  {product?.totalStock} Pcs in stock
+                </Badge>
+              ) : (
+                <Badge variant="destructive">Out of stock</Badge>
+              )}
+            </div>
           </div>
         </CardContent>
       </div>

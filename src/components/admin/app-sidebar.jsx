@@ -36,9 +36,22 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AvatarFallback, Avatar, AvatarImage } from "../ui/avatar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import profilePic from "@/assets/common/profile-pic.jpg";
+import Logout from "../common/logout";
+import { useState } from "react";
 
 const adminSidebarMenuItems = [
   {
@@ -64,6 +77,8 @@ const adminSidebarMenuItems = [
 function AppSidebar() {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [logoutAttempt, setLogoutAttempt] = useState(false);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
 
   return (
     <Sidebar>
@@ -97,7 +112,7 @@ function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="">
-          <DropdownMenu>
+          <DropdownMenu open={openUserMenu} onOpenChange={setOpenUserMenu}>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-gray-200 gap-x-2">
                 <Avatar className="w-8 h-8 rounded">
@@ -127,14 +142,22 @@ function AppSidebar() {
                   Profile
                   <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Log out
-                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setLogoutAttempt(true);
+                    setOpenUserMenu(false);
+                  }}
+                >
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
             </DropdownMenuContent>
           </DropdownMenu>
+          <div className="">
+            =
+            <Logout open={logoutAttempt} onOpenChange={setLogoutAttempt} />
+          </div>
         </div>
       </SidebarFooter>
     </Sidebar>

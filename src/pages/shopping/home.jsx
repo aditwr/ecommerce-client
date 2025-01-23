@@ -94,9 +94,9 @@ const ShoppingHome = () => {
   return (
     <Fragment>
       {/* Hero */}
-      <section id="hero" className="mt-12">
-        <div className="container relative z-10 w-full h-[70vh] bg-blue-50">
-          <div className="relative z-10 flex items-center h-full px-4 mx-auto md:px-12">
+      <section id="hero" className="w-full mt-12">
+        <div className=" relative z-10 w-full h-[70vh] bg-green">
+          <div className="container relative z-10 flex items-center w-full h-full px-4 mx-auto md:px-12">
             <div className="">
               <div className="flex flex-col mb-8 gap-y-2">
                 <h1 className="text-4xl font-semibold">
