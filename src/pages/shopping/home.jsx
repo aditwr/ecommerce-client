@@ -11,6 +11,8 @@ import {
 } from "@/store/shop/ProductSlice";
 import ShoppingProductCard from "@/components/shopping/product-card";
 import { useNavigate } from "react-router-dom";
+import ContactUs from "@/components/shopping/home/contact-us";
+import Footer from "@/components/common/footer";
 
 const ProductCategoriesArray = [
   {
@@ -32,17 +34,27 @@ const ProductCategoriesArray = [
   {
     id: "footwear",
     label: "Footwear",
-    description: "Comfortable and high quality shoes for your daily activities",
+    description: "Comfortable shoes for your daily activities",
   },
 ];
 
-const LandingSection = ({ id, title, description, children }) => {
+const LandingSection = ({
+  id,
+  title,
+  description,
+  children,
+  wrapperClassName,
+}) => {
   return (
-    <section id={id} className="py-16 bg-gray-100">
-      <div className="container mx-auto">
+    <section id={id} className={wrapperClassName}>
+      <div className="mx-auto ">
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-3xl font-bold text-center">{title}</h1>
-          <p className="text-lg text-center text-gray-500">{description}</p>
+          <h1 className="text-xl font-bold text-center sm:text-2xl 2xl:text-3xl">
+            {title}
+          </h1>
+          <p className="text-base text-center text-gray-500 2xl:text-lg">
+            {description}
+          </p>
         </div>
         {children}
       </div>
@@ -96,7 +108,7 @@ const ShoppingHome = () => {
       {/* Hero */}
       <section id="hero" className="w-full mt-12">
         <div className=" relative z-10 w-full h-[70vh] bg-green">
-          <div className="container relative z-10 flex items-center w-full h-full px-4 mx-auto md:px-12">
+          <div className="container relative z-10 flex items-center w-full h-full px-4 mx-auto xl:px-12">
             <div className="">
               <div className="flex flex-col mb-8 gap-y-2">
                 <h1 className="text-4xl font-semibold">
@@ -107,7 +119,7 @@ const ShoppingHome = () => {
                 </h1>
               </div>
               <div className="">
-                <Button>
+                <Button onClick={() => navigate("/shop/listing")}>
                   See Collections
                   <MoveRightIcon className="w-6 h-6 mr-2" />
                 </Button>
@@ -121,7 +133,7 @@ const ShoppingHome = () => {
                 key={index}
                 src={banner}
                 alt="banner"
-                className={`absolute top-0 left-0 w-full h-auto object-cover transition-opacity duration-1000 ${
+                className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ${
                   index === currentBanner ? "opacity-100" : "opacity-0"
                 }`}
               />
@@ -136,19 +148,20 @@ const ShoppingHome = () => {
         id="product-categories"
         title="Product Categories"
         description="Choose your favorite category"
+        wrapperClassName="py-16 bg-gray-100"
       >
-        <div className="container grid grid-cols-2 gap-8 px-4 mx-auto md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid justify-center grid-cols-1 gap-4 px-4 mx-auto xl:container sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {ProductCategoriesArray.map((category) => (
             <div
               key={category.id}
-              className="box-content flex flex-col items-center justify-center px-4 py-6 transition bg-white border border-white rounded-lg cursor-pointer group hover:bg-neutral-700 hover:text-white hover:border-neutral-200"
+              className="box-content flex flex-col items-center justify-center px-4 py-6 transition duration-300 bg-white border border-white rounded-lg cursor-pointer group hover:bg-neutral-700 hover:text-white hover:border-neutral-200"
               onClick={() => handleSelectProductCategory(category.id)}
             >
               <div className="relative flex justify-center w-full h-20 mb-4">
                 <img
                   src={`/img/categories-img/${category.id}.svg`}
                   alt={category.id}
-                  className="absolute object-cover w-auto h-full transition-all duration-700 group-hover:-translate-y-10 group-hover:scale-150"
+                  className="absolute object-cover w-auto h-full transition-all duration-150 group-hover:-translate-y-10 group-hover:scale-150 group-hover:rotate-12"
                 />
               </div>
               <h1 className="text-lg font-semibold">{category.label}</h1>
@@ -165,8 +178,9 @@ const ShoppingHome = () => {
         id="featured-products"
         title="Featured Products"
         description="Check out our featured products"
+        wrapperClassName="py-16 bg-gray-100"
       >
-        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.length > 0 ? (
             products.map((product) => (
               <div
@@ -184,6 +198,23 @@ const ShoppingHome = () => {
           )}
         </div>
       </LandingSection>
+
+      {/* Contact Us */}
+      <div className="px-4 py-16 bg-gray-100">
+        <div className="py-8 bg-white rounded-md sm:w-[600px] mx-auto">
+          <LandingSection
+            id="contact-us"
+            title="Contact Us"
+            description="Send us some questions, messages or feedback, we are happy to help you"
+            wrapperClassName="bg-white px-8"
+          >
+            <ContactUs />
+          </LandingSection>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </Fragment>
   );
 };

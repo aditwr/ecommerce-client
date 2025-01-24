@@ -49,7 +49,7 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
   return (
     <Card
       onClick={() => handleGetProductDetails(product._id)}
-      className="w-full h-full max-w-sm mz-auto"
+      className="w-full h-full max-w-sm p-0 mz-auto"
     >
       <div className="">
         <CardHeader className="relative p-0">
@@ -83,7 +83,7 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-3 lg:p-4">
           <h2 className="mb-2 text-base font-semibold 2xl:text-xl">
             {product?.title}
           </h2>

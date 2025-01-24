@@ -13,7 +13,7 @@ import {
   fetchFilteredProducts,
   fetchProductDetails,
 } from "@/store/shop/ProductSlice";
-import { ArrowUpDownIcon, SearchIcon } from "lucide-react";
+import { ArrowUpDownIcon, Loader, SearchIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import ShoppingProductCard from "@/components/shopping/product-card";
@@ -27,7 +27,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 function ShoppingListing() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { products, product } = useSelector((state) => state.shopProducts);
+  const { products, product, isLoading } = useSelector(
+    (state) => state.shopProducts
+  );
   const [search, setSearch] = useState(
     searchParams.get("search") || sessionStorage.getItem("search") || ""
   );
@@ -170,7 +172,7 @@ function ShoppingListing() {
                 className="flex space-x-2"
                 onClick={handleSearch}
               >
-                <SearchIcon /> Search
+                {!isLoading ? <SearchIcon /> : <Loader />} Search
               </Button>
             </div>
           </div>

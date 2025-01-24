@@ -155,7 +155,6 @@ function AppSidebar() {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="">
-            =
             <Logout open={logoutAttempt} onOpenChange={setLogoutAttempt} />
           </div>
         </div>

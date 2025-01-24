@@ -1,4 +1,4 @@
-import { Routes, Route, Router } from "react-router-dom";
+import { Routes, Route, Router, Navigate, useNavigate } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
@@ -62,7 +62,7 @@ function App() {
       <AuthenticatedUserProvider authenticatedUser={user}>
         <div className="flex flex-col overflow-hidden bg-white">
           <Routes>
-            <Route path="/" element={<h1>Root Page</h1>} />
+            <Route path="/" element={<RootPage />} />
             <Route
               path="/auth"
               element={
@@ -110,6 +110,24 @@ function App() {
       <Toaster />
     </>
   );
+}
+
+function RootPage() {
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/shop/home");
+      }
+    } else {
+      navigate("/auth/login");
+    }
+  }, [isAuthenticated]);
+
+  return <div className="mt-2 mr-2">Redirecting...</div>;
 }
 
 export default App;
