@@ -6,6 +6,7 @@ import cartReducer from "./shop/CartSlice";
 import shopOrderReducer from "./shop/OrderSlice";
 import adminOrderReducer from "./admin/AdminOrderSlice";
 import breadcrumbSlice from "./breadcrumbSlice";
+import reviewSlice from "./shop/RiviewSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     shopOrder: shopOrderReducer,
     adminOrder: adminOrderReducer,
     breadcrumb: breadcrumbSlice,
+    riview: reviewSlice,
   },
 });
 

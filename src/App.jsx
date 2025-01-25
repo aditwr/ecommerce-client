@@ -54,7 +54,14 @@ function App() {
   }, [user]);
 
   if (isLoading) {
-    return <Skeleton className="w-[800px] bg-black h-[60px]" />;
+    return (
+      <div className="flex items-center justify-center w-full h-[80vh]">
+        {/* spinner */}
+        <div className="relative w-16 h-16 border rounded-full border-neutral-200">
+          <span className="absolute block w-full h-full border-r-2 rounded-r-full border-neutral-400 animate-spin"></span>
+        </div>
+      </div>
+    );
   }
 
   return (
