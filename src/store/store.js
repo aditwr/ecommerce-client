@@ -17,7 +17,7 @@ const store = configureStore({
     shopOrder: shopOrderReducer,
     adminOrder: adminOrderReducer,
     breadcrumb: breadcrumbSlice,
-    riview: reviewSlice,
+    riviews: reviewSlice,
   },
 });
 

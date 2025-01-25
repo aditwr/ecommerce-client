@@ -35,7 +35,7 @@ export default [
       ],
       "react/prop-types": "off", // Disable the react/prop-types rule globally
       // disabled no-unused-vars rule
-      "no-unused-vars": "off",
+      "no-unused-vars": "on",
     },
   },
 ];

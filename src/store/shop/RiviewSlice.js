@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { build } from "vite";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const initialState = {
   reviews: [],
-  specificProductReviewsByUser: [],
+  specificProductReviewsByUser: {},
   loading: false,
-  error: null,
 };
 
 export const fetchRiviews = createAsyncThunk(
@@ -77,7 +75,7 @@ export const checkIsUserBroughtTheProduct = createAsyncThunk(
 
 export const checkIsUserHasRiviewedTheProduct = createAsyncThunk(
   "riview/checkIsUserHasRiviewedTheProduct",
-  async ({ productId, userId }) => {
+  async ({ productId }) => {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/shop/riview/check/has-riviewed`,
@@ -98,24 +96,9 @@ export const checkIsUserHasRiviewedTheProduct = createAsyncThunk(
 );
 
 const riviewSlice = createSlice({
-  name: "riview",
+  name: "riviews",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchRiviews.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchRiviews.fulfilled, (state, action) => {
-        state.loading = false;
-        state.reviews = action.payload.reviews;
-      })
-      .addCase(fetchRiviews.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-  },
 });
 
 export default riviewSlice.reducer;

@@ -7,7 +7,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { deleteProduct } from "@/store/admin/products-slice";
 import { useDispatch } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { Fragment } from "react";

@@ -1,5 +1,10 @@
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogDescription,
+  DialogTitle,
+} from "../ui/dialog";
 import { Button } from "../ui/button";
 import { ShoppingCartIcon, StarIcon } from "lucide-react";
 import RiviewProduct from "./riview";
@@ -10,11 +15,11 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
       <DialogContent className="flex w-full gap-8 max-w-[90vw] sm:max-w-[90vw] lg:max-w-[700px]">
         <div className="grid basis-6/12">
           <DialogHeader className={`flex flex-col gap-2`}>
-            <div className="w-full h-64 overflow-hidden rounded-md">
+            <div className="h-64 overflow-hidden rounded-md aspect-square">
               <img
                 src={productDetails?.image}
                 alt={productDetails?.title}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full aspect-square"
                 width={600}
                 height={600}
               />
@@ -79,7 +84,7 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
         </div>
         <RiviewProduct
           productId={productDetails?._id}
-          wrapperClass="relative h-[80vh] flex flex-col rounded-lg basis-6/12"
+          wrapperClass="relative h-[600px] flex flex-col rounded-lg basis-6/12"
         />
       </DialogContent>
     </Dialog>

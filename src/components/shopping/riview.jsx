@@ -12,8 +12,8 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import accessDenied from "@/assets/common/access-denied.svg";
 import superThankYou from "@/assets/common/super-thank-you.svg";
+import forRiview from "@/assets/common/for-riview.svg";
 import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { useEffect, useState } from "react";
@@ -27,7 +27,6 @@ import {
   createRiview,
   fetchRiviews,
 } from "@/store/shop/RiviewSlice";
-import { comment } from "postcss";
 import { useToast } from "@/hooks/use-toast";
 
 function RatingStarsInput({ rating, setRating }) {
@@ -55,10 +54,13 @@ const riviewSchema = z.object({
 });
 
 function RiviewProduct({ productId, wrapperClass }) {
-  const { riviews } = useSelector((state) => state.riview);
+  const [riviews, setRiviews] = useState([]);
   const [canRiview, setCanRiview] = useState(false);
   const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
   const [hasRiviewed, setHasRiviewed] = useState(false);
+  const [userRiview, setUserRiview] = useState(null);
+  const [currentlyEditRiview, setCurrentlyEditRiview] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -69,17 +71,33 @@ function RiviewProduct({ productId, wrapperClass }) {
   } = useForm({
     resolver: zodResolver(riviewSchema),
     defaultValues: {
-      comment: "",
+      comment: comment || "",
     },
   });
+  useEffect(() => {
+    setRating(userRiview?.rating || 0);
+  }, [userRiview]);
+
+  function fetchRiviewsForProduct() {
+    dispatch(fetchRiviews({ productId })).then((action) => {
+      if (action?.payload?.success) {
+        setRiviews(action?.payload?.riviews);
+      }
+    });
+  }
+  function checkUserRiview() {
+    dispatch(checkIsUserHasRiviewedTheProduct({ productId })).then((action) => {
+      if (action?.payload?.success) {
+        setHasRiviewed(action?.payload?.data?.isUserAlreadyRiviewed);
+        setUserRiview(action?.payload?.data?.riview);
+      }
+    });
+  }
 
   useEffect(() => {
     if (productId) {
       // fetch all riviews for this product
-      dispatch(fetchRiviews({ productId })).then(
-        (action) => {}
-        // console.log(action)
-      );
+      fetchRiviewsForProduct();
 
       // check if user brought the product
       dispatch(checkIsUserBroughtTheProduct({ productId })).then((action) => {
@@ -88,13 +106,7 @@ function RiviewProduct({ productId, wrapperClass }) {
         }
       });
       // check if user already riviewed the product
-      dispatch(checkIsUserHasRiviewedTheProduct({ productId })).then(
-        (action) => {
-          if (action?.payload?.success) {
-            setHasRiviewed(action?.payload?.data?.isUserAlreadyRiviewed);
-          }
-        }
-      );
+      checkUserRiview();
     }
   }, [productId, dispatch]);
 
@@ -104,6 +116,10 @@ function RiviewProduct({ productId, wrapperClass }) {
     ).then((action) => {
       if (action?.payload?.success) {
         setHasRiviewed(true);
+        setCanRiview(false);
+        setCurrentlyEditRiview(false);
+        fetchRiviewsForProduct();
+        checkUserRiview();
         toast({
           title: action?.payload?.message,
         });
@@ -111,44 +127,79 @@ function RiviewProduct({ productId, wrapperClass }) {
     });
   }
 
+  function handleEditRiview() {
+    setHasRiviewed(false);
+    setCanRiview(true);
+    setCurrentlyEditRiview(true);
+  }
+
   return (
     <div className={wrapperClass}>
       <div className="relative w-full h-full p-4 rounded-md bg-neutral-100">
         {/* <div className="absolute top-0 bottom-0 left-0 right-0 bg-red-100"></div> */}
         <Tabs defaultValue="riviews" className="flex flex-col w-full h-full">
-          <TabsList className="grid w-full grid-cols-2 basis-1/12">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="riviews">Riviews</TabsTrigger>
             <TabsTrigger value="give_riview">My Riview</TabsTrigger>
           </TabsList>
-          <TabsContent value="riviews" className="w-full p-0 basis-11/12">
+          <TabsContent value="riviews" className="w-full h-full p-0">
             <Card className="h-full px-4 py-6">
-              <ScrollArea className="h-full">
-                <div className="grid w-full h-full gap-6">
-                  {/* single riview */}
-                  <div className="flex gap-4">
-                    <Avatar className="w-8 h-8 border">
-                      <AvatarFallback className="text-sm font-medium bg-neutral-300">
-                        SM
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-normal">Andrew Tate</h3>
+              {riviews.length > 0 ? (
+                <ScrollArea className="h-full">
+                  <div className="grid w-full h-full gap-6">
+                    {riviews.map((riview) => (
+                      <div className="flex gap-4" key={riview._id}>
+                        <Avatar className="w-8 h-8 border">
+                          <AvatarFallback className="text-sm font-medium bg-neutral-300">
+                            {riview.user.email[0].toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="grid gap-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-normal">
+                              {riview.user.email}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star, index) => (
+                              <StarIcon
+                                key={index}
+                                className={`w-3 h-3 ${
+                                  star <= riview?.rating || 0
+                                    ? "fill-primary"
+                                    : "fill-none"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {riview.comment}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-0.5">
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      </p>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              </ScrollArea>
+                </ScrollArea>
+              ) : (
+                <Card className="h-full">
+                  <CardHeader className="flex flex-col items-center justify-center h-full">
+                    <div className="h-32 mb-4">
+                      <img
+                        src={forRiview}
+                        alt="riview "
+                        className="object-contain h-full aspect-square"
+                      />
+                    </div>
+                    <CardTitle className="text-base text-center">
+                      Be the first to riview this product
+                    </CardTitle>
+                    <CardDescription className="text-center">
+                      Share your experience with this product
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-center"></CardContent>
+                </Card>
+              )}
             </Card>
           </TabsContent>
           <TabsContent value="give_riview" className="h-full">
@@ -174,14 +225,19 @@ function RiviewProduct({ productId, wrapperClass }) {
                   <div className="flex gap-3 p-4 rounded-md bg-neutral-100">
                     <div className="grid gap-1">
                       <div className="flex items-center gap-0.5">
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
-                        <StarIcon className="w-3 h-3 fill-primary" />
+                        {[1, 2, 3, 4, 5].map((star, index) => (
+                          <StarIcon
+                            key={index}
+                            className={`w-3 h-3 ${
+                              star <= userRiview?.rating || 0
+                                ? "fill-primary"
+                                : "fill-none"
+                            }`}
+                          />
+                        ))}
                       </div>
                       <p className="text-xs leading-relaxed line-clamp-2 text-neutral-700">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        {userRiview?.comment}
                       </p>
                     </div>
                   </div>
@@ -192,6 +248,7 @@ function RiviewProduct({ productId, wrapperClass }) {
                     variant="secondary"
                     size="sm"
                     className="text-xs font-medium tracking-wide"
+                    onClick={handleEditRiview}
                   >
                     Edit Riview
                   </Button>
@@ -202,7 +259,9 @@ function RiviewProduct({ productId, wrapperClass }) {
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle className="text-base">
-                    Riview this product
+                    {currentlyEditRiview
+                      ? "Change your riview"
+                      : "Riview this product"}
                   </CardTitle>
                   <CardDescription>
                     Share your experience with this product
@@ -237,7 +296,7 @@ function RiviewProduct({ productId, wrapperClass }) {
                       size="sm"
                       className="text-xs font-medium tracking-wide"
                     >
-                      Riview
+                      {currentlyEditRiview ? "Update Riview" : "Submit Riview"}
                     </Button>
                   </form>
                 </CardContent>
