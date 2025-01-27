@@ -13,9 +13,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { BoxIcon, PhoneIcon } from "lucide-react";
 import { createNewOrder } from "@/store/shop/OrderSlice";
+import { useNavigate } from "react-router-dom";
 
 const ShoppingCheckout = () => {
   const { cart } = useSelector((state) => state.cart);
@@ -29,13 +42,16 @@ const ShoppingCheckout = () => {
   const [canOrder, setCanOrder] = useState(false);
   const [isPaymentStarted, setIsPaymentStarted] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [addressShippingIsEmpty, setAddressShippingIsEmpty] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   let shippingPrice = 10;
 
   useEffect(() => {
     try {
       getAddress().then((res) => {
         setAddresses(res.data);
+        setAddressShippingIsEmpty(res?.data?.length === 0);
       });
     } catch (error) {
       toast({
@@ -101,8 +117,6 @@ const ShoppingCheckout = () => {
       payerId: "none",
     };
 
-    // console.log(orderData, "order data");
-
     dispatch(createNewOrder(orderData)).then((data) => {
       if (data?.payload?.success) {
         setIsPaymentStarted(true);
@@ -122,10 +136,10 @@ const ShoppingCheckout = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto mt-20">
-        <h1 className="mb-4 text-2xl font-bold">Checkout</h1>
-        <div className="grid grid-cols-1 gap-x-4 md:grid-cols-3 xl:grid-cols-4">
-          <div className="col-span-2 ">
+      <h1 className="mb-4 text-2xl font-bold">Checkout</h1>
+      <div className="container flex justify-center mx-auto mt-20">
+        <div className="grid w-[80vw] grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-5">
+          <div className="md:col-span-2 xl:col-span-3">
             <div className="p-4 px-6 bg-white border rounded-md">
               <div className="mb-4 ">
                 <h1 className="text-xl font-semibold">Checkout Products</h1>
@@ -169,7 +183,7 @@ const ShoppingCheckout = () => {
                 </div>
               </div>
               <div className="">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                   <h1 className="text-xl font-semibold">Shipping Address</h1>
                   <div className="mb-4">
                     <Dialog
@@ -250,8 +264,8 @@ const ShoppingCheckout = () => {
               </div>
             </div>
           </div>
-          <div className="col-span-1 xl:col-span-2">
-            <div className="p-4 px-6 bg-white border rounded-md xl:w-9/12">
+          <div className="md:col-span-1 xl:col-span-2">
+            <div className="p-4 px-6 bg-white border rounded-md">
               <h1 className="mb-2 text-xl font-semibold">Order Summary</h1>
               <div className="py-2 space-y-3">
                 <div className="">
@@ -300,6 +314,26 @@ const ShoppingCheckout = () => {
           </div>
         </div>
       </div>
+      {/* Address Shipping Empty Alert Dialog */}
+      <AlertDialog open={addressShippingIsEmpty}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Your Shipping Address</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your shipping address is empty. You need to add at least 1
+              shipping address to continue purchase.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => navigate("/shop/account?activeTab=address")}
+              variant="secondary"
+            >
+              Go to add address
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

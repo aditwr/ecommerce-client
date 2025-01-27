@@ -23,16 +23,18 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
     totalStock,
   }) => {
     // cart.products & productId
-    let productInCart = cart.products.find(
-      (product) => product.productId._id === productId
-    );
-    if (productInCart) {
-      const currentQtyInCart = productInCart?.quantity;
-      if (currentQtyInCart === totalStock) {
-        toast({
-          title: `Only ${totalStock} Pcs in stock, you can't add more`,
-        });
-        return; // Exit the function
+    if (cart?.products && cart?.products.length > 0) {
+      let productInCart = cart.products.find(
+        (product) => product.productId._id === productId
+      );
+      if (productInCart) {
+        const currentQtyInCart = productInCart?.quantity;
+        if (currentQtyInCart === totalStock) {
+          toast({
+            title: `Only ${totalStock} Pcs in stock, you can't add more`,
+          });
+          return; // Exit the function
+        }
       }
     }
 

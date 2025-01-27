@@ -15,7 +15,6 @@ import { addNewAddressFormControls } from "@/config/shop-form";
 import CustomForm from "@/components/common/custom-form";
 import { addAddress, deleteAddress, getAddress } from "@/utils/address-utils";
 import { useToast } from "@/hooks/use-toast";
-import { validator } from "validator";
 import { TrashIcon } from "lucide-react";
 import {
   AlertDialog,
@@ -28,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import noDataImg from "@/assets/common/no-data.svg";
 
 function AddressSection() {
   const [formData, setFormData] = useState({
@@ -125,11 +125,15 @@ function AddressSection() {
           <div className="order-2">
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">Add New Address</Button>
+                <Button size="sm" className="text-xs">
+                  Add New Address
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Add New Address</DialogTitle>
+                  <DialogTitle className="text-base">
+                    Add New Address
+                  </DialogTitle>
                   <DialogDescription>
                     Add a new address for delivery
                   </DialogDescription>
@@ -148,51 +152,70 @@ function AddressSection() {
             </Dialog>
           </div>
           <div className="order-1 w-full">
-            <h2 className="text-xl font-semibold">Saved Addresses</h2>
+            <h2 className="text-lg font-semibold">Saved Addresses</h2>
           </div>
         </div>
         <div className="">
-          {addressList.map((address) => (
-            <div
-              key={address._id}
-              className="flex justify-between w-full p-4 my-2 border rounded-md"
-            >
-              <div className="">
-                <span className="block font-medium">{address.address}</span>
-                <div className="grid items-center grid-cols-4">
-                  <span className="col-span-2">
-                    {address.city}, {address.postalCode}, {address.country}
-                  </span>
-                  <span>{address.phoneNumber}</span>
+          {addressList.length > 0 ? (
+            <div className="">
+              {addressList.map((address) => (
+                <div
+                  key={address._id}
+                  className="flex justify-between w-full p-4 my-2 border rounded-md"
+                >
+                  <div className="">
+                    <span className="block font-medium">{address.address}</span>
+                    <div className="grid items-center grid-cols-4">
+                      <span className="col-span-2">
+                        {address.city}, {address.postalCode}, {address.country}
+                      </span>
+                      <span>{address.phoneNumber}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <TrashIcon size={16} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Address</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this address?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(address._id)}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
-                      <TrashIcon size={16} />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Address</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this address?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDelete(address._id)}
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+              ))}
+            </div>
+          ) : (
+            <div className="h-[400px] flex justify-center items-center">
+              <div className="space-y-3">
+                <div className="flex justify-center w-full h-28">
+                  <img
+                    src={noDataImg}
+                    alt="no data image"
+                    className="object-contain h-full"
+                  />
+                </div>
+                <h3 className="text-sm font-medium text-neutral-600">
+                  Your shipping address is empty!
+                </h3>
               </div>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </Fragment>

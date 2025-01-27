@@ -6,10 +6,23 @@ import { MapPinIcon, ShoppingBagIcon, UserRoundCogIcon } from "lucide-react";
 import AccountProfile from "@/components/shopping/account/account-profile";
 import AddressSection from "@/components/shopping/address/address";
 import ShoppingOrdersIndex from "./orders";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const ShoppingAccount = () => {
   const user = useAuthenticatedUser();
-  // console.log(user);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams?.get("activeTab") || "orders"
+  );
+  console.log(activeTab);
+
+  function goToTab(tab) {
+    const search_params = new URLSearchParams();
+    searchParams.set("activeTab", tab);
+    setSearchParams(searchParams);
+    setActiveTab(tab);
+  }
 
   return (
     <div className="container px-4 pb-20 mx-auto mt-20">
@@ -46,17 +59,29 @@ const ShoppingAccount = () => {
 
       {/* Content */}
       <div className="mt-8">
-        <Tabs defaultValue="orders" className="w-[800px] mx-auto">
+        <Tabs value={activeTab} className="w-[800px] mx-auto">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="orders" className="space-x-2">
+            <TabsTrigger
+              onClick={() => goToTab("orders")}
+              value="orders"
+              className="space-x-2"
+            >
               <ShoppingBagIcon size={16} className="text-primary" />
               <span className="">Orders</span>
             </TabsTrigger>
-            <TabsTrigger value="address" className="space-x-2">
+            <TabsTrigger
+              onClick={() => goToTab("address")}
+              value="address"
+              className="space-x-2"
+            >
               <MapPinIcon size={16} className="text-primary" />
               <span className="">Address</span>
             </TabsTrigger>
-            <TabsTrigger value="profile" className="space-x-2">
+            <TabsTrigger
+              onClick={() => goToTab("profile")}
+              value="profile"
+              className="space-x-2"
+            >
               <UserRoundCogIcon size={16} className="text-primary" />
               <span className="">Profile</span>
             </TabsTrigger>

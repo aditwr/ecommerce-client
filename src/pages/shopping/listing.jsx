@@ -23,6 +23,7 @@ import Pagination from "@/components/common/pagination";
 import { setFiltersToQuery } from "@/utils/shop-utils";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getAddress } from "@/utils/address-utils";
 
 function ShoppingListing() {
   const dispatch = useDispatch();
@@ -51,6 +52,15 @@ function ShoppingListing() {
   const [totalPages, setTotalPages] = useState(1);
   const limitProductsPerPage = 5;
 
+  useEffect(() => {
+    // check is user already set a shipping address
+    getAddress().then((response) => {
+      if (response?.data?.length === 0) {
+        // set alert
+      }
+    });
+  }, []);
+
   // Update url based on related state changes
   useEffect(() => {
     let params = new URLSearchParams();
@@ -71,8 +81,6 @@ function ShoppingListing() {
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, sort]);
-
-  useEffect(() => {}, [search]);
 
   // fetch products based on filters and sort
   useEffect(() => {
