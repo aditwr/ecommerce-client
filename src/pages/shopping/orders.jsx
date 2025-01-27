@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
 } from "@/components/ui/dropdown-menu";
+import noDataImg from "@/assets/common/no-data.svg";
 import { orderListSortOptions } from "@/config";
 
 function ShoppingOrdersIndex() {
@@ -102,90 +103,100 @@ function ShoppingOrdersIndex() {
       </div>
       <div className="">
         {orders.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Order ID</TableHead>
-                <TableHead>Order Date</TableHead>
-                <TableHead>Order Status</TableHead>
-                <TableHead>Payment Status</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>See Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order._id}>
-                  <TableCell className="text-xs font-medium">
-                    {order._id}
-                  </TableCell>
-                  <TableCell className="flex gap-y-0.5 flex-col text-sm text-foreground/70">
-                    <span className="">
-                      {new Date(order.orderDate).toDateString()}
-                    </span>
-                    <span className="text-xs font-medium">
-                      {new Date(order.orderDate).toLocaleTimeString()}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      {...(order?.orderStatus === "delivered"
-                        ? {
-                            className:
-                              "text-green-900 bg-green-300 hover:bg-green-300",
-                          }
-                        : order?.orderStatus === "cancelled"
-                        ? {
-                            className:
-                              "text-red-900 bg-red-300 hover:bg-red-300",
-                          }
-                        : { variant: "secondary" })}
-                    >
-                      {order?.orderStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {order.paymentStatus == "paid" ? (
-                      <Badge className="text-green-900 bg-green-300 hover:bg-green-300">
-                        Paid
-                      </Badge>
-                    ) : order.paymentStatus == "pending" ? (
-                      <Badge className="text-yellow-900 bg-yellow-300 hover:bg-yellow-300">
-                        Pending
-                      </Badge>
-                    ) : order.paymentStatus == "cancelled" ? (
-                      <Badge className="text-red-900 bg-red-300 hover:bg-red-300">
-                        Cancelled
-                      </Badge>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="font-semibold text-right">
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }).format(order.totalAmount)}
-                  </TableCell>
-                  <TableCell>
-                    <ShoppingOrderDetails order={order} />
-                  </TableCell>
+          <div className="" key={orders._id}>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[200px]">Order ID</TableHead>
+                  <TableHead>Order Date</TableHead>
+                  <TableHead>Order Status</TableHead>
+                  <TableHead>Payment Status</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>See Details</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {orders.map((order) => (
+                  <TableRow key={order._id}>
+                    <TableCell className="text-xs font-medium">
+                      {order._id}
+                    </TableCell>
+                    <TableCell className="flex gap-y-0.5 flex-col text-sm text-foreground/70">
+                      <span className="">
+                        {new Date(order.orderDate).toDateString()}
+                      </span>
+                      <span className="text-xs font-medium">
+                        {new Date(order.orderDate).toLocaleTimeString()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        {...(order?.orderStatus === "delivered"
+                          ? {
+                              className:
+                                "text-green-900 bg-green-300 hover:bg-green-300",
+                            }
+                          : order?.orderStatus === "cancelled"
+                          ? {
+                              className:
+                                "text-red-900 bg-red-300 hover:bg-red-300",
+                            }
+                          : { variant: "secondary" })}
+                      >
+                        {order?.orderStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {order.paymentStatus == "paid" ? (
+                        <Badge className="text-green-900 bg-green-300 hover:bg-green-300">
+                          Paid
+                        </Badge>
+                      ) : order.paymentStatus == "pending" ? (
+                        <Badge className="text-yellow-900 bg-yellow-300 hover:bg-yellow-300">
+                          Pending
+                        </Badge>
+                      ) : order.paymentStatus == "cancelled" ? (
+                        <Badge className="text-red-900 bg-red-300 hover:bg-red-300">
+                          Cancelled
+                        </Badge>
+                      ) : null}
+                    </TableCell>
+                    <TableCell className="font-semibold text-right">
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(order.totalAmount)}
+                    </TableCell>
+                    <TableCell>
+                      <ShoppingOrderDetails order={order} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {/* pagination */}
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(page) => setPage(page)}
+            />
+          </div>
         ) : (
-          <div className="w-full h-[50vh] flex justify-center items-center">
-            <h2 className="text-lg font-semibold text-gray-500">
-              No Orders Found
-            </h2>
+          <div className="h-[400px] flex justify-center items-center">
+            <div className="space-y-3">
+              <div className="flex justify-center w-full h-28">
+                <img
+                  src={noDataImg}
+                  alt="no data image"
+                  className="object-contain h-full"
+                />
+              </div>
+              <h3 className="text-sm font-medium text-neutral-600">
+                Your orders is empty!
+              </h3>
+            </div>
           </div>
         )}
-
-        {/* pagination */}
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={(page) => setPage(page)}
-        />
       </div>
     </div>
   );

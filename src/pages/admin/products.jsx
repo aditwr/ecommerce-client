@@ -39,9 +39,8 @@ const AdminProducts = () => {
   const [productImage, setProductImage] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
-  const { productList, isLoading } = useSelector(
-    (state) => state.adminProducts
-  ); // get state from redux store
+  const { isLoading } = useSelector((state) => state.adminProducts); // get state from redux store
+  const [productList, setProductList] = useState([]);
   const [currentEditedId, setCurrentEditedId] = useState(null);
   const { toast } = useToast();
 
@@ -50,10 +49,9 @@ const AdminProducts = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limitProductsPerPage = 5;
+  const limitProductsPerPage = 10;
 
-  // mount
-  useEffect(() => {
+  function getAllProducts() {
     dispatch(
       fetchAllProducts({ page: currentPage, limit: limitProductsPerPage })
     ).then((response) => {
@@ -61,9 +59,15 @@ const AdminProducts = () => {
         setTotalPages(
           Math.ceil(response.payload.totalDocuments / limitProductsPerPage)
         );
+        setProductList(response.payload.data);
       }
     });
-  }, [currentPage]);
+  }
+
+  // mount
+  useEffect(() => {
+    getAllProducts();
+  }, [currentPage, dispatch]);
 
   useEffect(() => {
     if (uploadedImageUrl) {
@@ -119,6 +123,7 @@ const AdminProducts = () => {
         }
       );
     }
+    getAllProducts();
   }
 
   function handleDeleteProduct(id) {
@@ -130,6 +135,7 @@ const AdminProducts = () => {
         });
       }
     });
+    getAllProducts();
   }
 
   return (
@@ -223,7 +229,7 @@ const AdminProducts = () => {
               <p>No products found</p>
             )}
           </div>
-          <div className="mt-6">
+          <div className="pb-12 mt-6">
             <Pagination
               totalPages={totalPages}
               currentPage={currentPage}

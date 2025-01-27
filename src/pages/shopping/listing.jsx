@@ -50,7 +50,7 @@ function ShoppingListing() {
       1
   );
   const [totalPages, setTotalPages] = useState(1);
-  const limitProductsPerPage = 5;
+  const limitProductsPerPage = 12;
 
   useEffect(() => {
     // check is user already set a shipping address
@@ -219,7 +219,7 @@ function ShoppingListing() {
           </div>
         </div>
         <div className="pb-6">
-          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
             {loading ? (
               Array.from({ length: 10 }).map((_, index) => (
                 <div key={index} className="w-full h-full max-w-sm mz-auto">

@@ -86,7 +86,7 @@ function ShoppingProductCard({ product, handleGetProductDetails = () => {} }) {
           </div>
         </CardHeader>
         <CardContent className="p-3 lg:p-4">
-          <h2 className="mb-2 text-base font-semibold 2xl:text-xl">
+          <h2 className="mb-2 text-base font-semibold 2xl:text-lg">
             {product?.title}
           </h2>
           <div className="flex items-center justify-start gap-2 mb-2">

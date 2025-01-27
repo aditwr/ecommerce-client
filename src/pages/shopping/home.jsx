@@ -75,7 +75,7 @@ const ShoppingHome = () => {
         filtersParams: {},
         sortParams: "",
         page: 1,
-        limit: 8,
+        limit: 12,
       })
     );
   }, []);
@@ -178,9 +178,9 @@ const ShoppingHome = () => {
         id="featured-products"
         title="Featured Products"
         description="Check out our featured products"
-        wrapperClassName="py-16 bg-gray-100"
+        wrapperClassName="py-16 bg-gray-100 "
       >
-        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-1 gap-4 px-4 mx-auto xl:container sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.length > 0 ? (
             products.map((product) => (
               <div
