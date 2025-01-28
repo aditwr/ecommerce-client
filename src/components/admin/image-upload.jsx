@@ -29,7 +29,7 @@ function ProductImageUpload({
       formData.append("my_file", productImage);
       // send the formData instance to the server
       const response = await axios.post(
-        "http://localhost:5000/api/admin/products/upload-image",
+        `${import.meta.env.VITE_API_BASE_URL}/api/admin/products/upload-image`,
         formData
       );
       console.log(

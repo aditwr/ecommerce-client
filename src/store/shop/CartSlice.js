@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const initialState = {
   cart: [],
   loading: false,
@@ -60,14 +62,11 @@ export const addProductToCartThunk = createAsyncThunk(
   "cart/addProductToCart",
   async ({ userId, productId, quantity }) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/shop/cart/add",
-        {
-          userId,
-          productId,
-          quantity,
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/shop/cart/add`, {
+        userId,
+        productId,
+        quantity,
+      });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -80,7 +79,7 @@ export const getCartDataThunk = createAsyncThunk(
   async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/shop/cart/${userId}`
+        `${API_BASE_URL}/api/shop/cart/${userId}`
       );
       return response.data;
     } catch (error) {
@@ -94,7 +93,7 @@ export const increaseCartProductQuantityThunk = createAsyncThunk(
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/shop/cart/increase",
+        `${API_BASE_URL}/api/shop/cart/increase`,
         {
           userId,
           productId,
@@ -113,7 +112,7 @@ export const decreaseCartProductQuantityThunk = createAsyncThunk(
   async ({ userId, productId, quantity }) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/shop/cart/decrease",
+        `${API_BASE_URL}/api/shop/cart/decrease`,
         {
           userId,
           productId,
@@ -132,7 +131,7 @@ export const removeProductFromCartThunk = createAsyncThunk(
   async ({ userId, productId }) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/shop/cart/remove",
+        `${API_BASE_URL}/api/shop/cart/remove`,
         {
           userId,
           productId,

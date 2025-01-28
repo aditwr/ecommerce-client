@@ -11,7 +11,7 @@ export const addNewProduct = createAsyncThunk(
   async (productData) => {
     // Send a POST request to the server
     const response = await axios.post(
-      "http://localhost:5000/api/admin/products/add",
+      `${import.meta.env.VITE_API_BASE_URL}/api/admin/products/add`,
       productData
     );
     return response.data;
@@ -24,7 +24,9 @@ export const fetchAllProducts = createAsyncThunk(
   async ({ page, limit }) => {
     const query = new URLSearchParams({ page, limit });
     const response = await axios.get(
-      `http://localhost:5000/api/admin/products/get?${query.toString()}`
+      `${
+        import.meta.env.VITE_API_BASE_URL
+      }/api/admin/products/get?${query.toString()}`
     );
     return response.data;
   }
@@ -34,7 +36,7 @@ export const editProduct = createAsyncThunk(
   "products/edit",
   async ({ id, formData }) => {
     const response = await axios.put(
-      `http://localhost:5000/api/admin/products/edit/${id}`,
+      `${import.meta.env.VITE_API_BASE_URL}/api/admin/products/edit/${id}`,
       formData
     );
     return response.data;
@@ -43,7 +45,7 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk("products/delete", async (id) => {
   const response = await axios.delete(
-    `http://localhost:5000/api/admin/products/delete/${id}`
+    `${import.meta.env.VITE_API_BASE_URL}/api/admin/products/delete/${id}`
   );
   return response.data;
 });

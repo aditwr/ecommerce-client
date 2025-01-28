@@ -2,10 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-const DATA_ENCRYPTION_KEY =
-  import.meta.env.VITE_DATA_ENCRYPTION_KEY || "some-secret-key";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const DATA_ENCRYPTION_KEY = import.meta.env.VITE_DATA_ENCRYPTION_KEY;
 
 const initialState = {
   isAuthenticated: false,
@@ -17,7 +15,7 @@ export const registerUserThunk = createAsyncThunk(
   "/auth/register",
   async (formData) => {
     const response = await axios.post(
-      `${API_BASE_URL}/auth/register`,
+      `${API_BASE_URL}/api/auth/register`,
       formData,
       { withCredentials: true }
     );
@@ -38,7 +36,7 @@ export const loginUserThunk = createAsyncThunk(
     ).toString();
 
     const response = await axios.post(
-      `${API_BASE_URL}/auth/login`,
+      `${API_BASE_URL}/api/auth/login`,
       {
         email: encryptedEmail,
         password: encryptedPassword,
@@ -51,7 +49,7 @@ export const loginUserThunk = createAsyncThunk(
   }
 );
 export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
-  const response = await axios.get(`${API_BASE_URL}/auth/check-auth`, {
+  const response = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
     withCredentials: true,
     headers: {
       "Cache-Control": "no-cache, no-store, must-revalidate, proxy-revalidate",
@@ -62,7 +60,7 @@ export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
 
 export const logoutUserThunk = createAsyncThunk("/auth/logout", async () => {
   const response = await axios.post(
-    `${API_BASE_URL}/auth/logout`,
+    `${API_BASE_URL}/api/auth/logout`,
     {}, // post method requires a body, so we pass an empty object
     {
       withCredentials: true,
@@ -76,7 +74,7 @@ export const updateUserThunk = createAsyncThunk(
   async (formData) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/account/update-profile`,
+        `${API_BASE_URL}/api/account/update-profile`,
         formData,
         {
           withCredentials: true,
@@ -103,7 +101,7 @@ export const resetPasswordThunk = createAsyncThunk(
       ).toString();
 
       const response = await axios.put(
-        `${API_BASE_URL}/account/change-password`,
+        `${API_BASE_URL}/api/account/change-password`,
         {
           oldPassword: encryptedOldPassword,
           newPassword: encryptedNewPassword,

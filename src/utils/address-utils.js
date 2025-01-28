@@ -11,7 +11,7 @@ export const addAddress = async ({
 }) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/account/address/add`,
+      `${API_BASE_URL}/api/account/address/add`,
       {
         address,
         city,
@@ -33,9 +33,12 @@ export const addAddress = async ({
 
 export const getAddress = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/account/address/get`, {
-      withCredentials: true, // Send cookies
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/api/account/address/get`,
+      {
+        withCredentials: true, // Send cookies
+      }
+    );
     return response.data;
   } catch (error) {
     console.log("getAddress Error : ", error);
@@ -46,7 +49,7 @@ export const getAddress = async () => {
 export const deleteAddress = async (addressId) => {
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}/account/address/delete/${addressId}`,
+      `${API_BASE_URL}/api/account/address/delete/${addressId}`,
       {
         withCredentials: true, // Send cookies
       }

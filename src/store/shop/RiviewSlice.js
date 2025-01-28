@@ -14,7 +14,7 @@ export const fetchRiviews = createAsyncThunk(
   async ({ productId }) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/shop/riview/${productId}`,
+        `${API_BASE_URL}/api/shop/riview/${productId}`,
         {
           withCredentials: true,
         }
@@ -32,7 +32,7 @@ export const createRiview = createAsyncThunk(
   async ({ productId, rating, comment }) => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/shop/riview/create`,
+        `${API_BASE_URL}/api/shop/riview/create`,
         {
           productId,
           rating,
@@ -56,7 +56,7 @@ export const checkIsUserBroughtTheProduct = createAsyncThunk(
   async ({ productId, userId }) => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/shop/riview/check/brought-product`,
+        `${API_BASE_URL}/api/shop/riview/check/brought-product`,
         {
           productId,
         },
@@ -78,7 +78,7 @@ export const checkIsUserHasRiviewedTheProduct = createAsyncThunk(
   async ({ productId }) => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/shop/riview/check/has-riviewed`,
+        `${API_BASE_URL}/api/shop/riview/check/has-riviewed`,
         {
           productId,
         },

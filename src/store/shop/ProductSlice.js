@@ -2,6 +2,8 @@ import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setFiltersToQuery } from "@/utils/shop-utils";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const initialState = {
   products: [],
   product: null,
@@ -58,7 +60,7 @@ export const fetchFilteredProducts = createAsyncThunk(
     if (search) query.set("search", search);
 
     const response = await axios.get(
-      `http://localhost:5000/api/shop/products?${query.toString()}`
+      `${API_BASE_URL}/api/shop/products?${query.toString()}`
     );
     return response.data;
   }
@@ -68,7 +70,7 @@ export const fetchProductDetails = createAsyncThunk(
   "shopProduct/fetchProductDetails",
   async (productId) => {
     const response = await axios.get(
-      `http://localhost:5000/api/shop/products/${productId}`
+      `${API_BASE_URL}/api/shop/products/${productId}`
     );
     return response.data;
   }

@@ -13,7 +13,7 @@ export const fetchAllOrders = createAsyncThunk(
   async ({ page = 1, limit = 10, sort = "newest" }) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/admin/order/get?page=${page}&limit=${limit}&sort=${sort}`
+        `${API_BASE_URL}/api/admin/order/get?page=${page}&limit=${limit}&sort=${sort}`
       );
       return response.data;
     } catch (error) {
@@ -28,7 +28,7 @@ export const updateOrderStatus = createAsyncThunk(
   async ({ orderId, orderStatus }) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/admin/order/update/${orderId}`,
+        `${API_BASE_URL}/api/admin/order/update/${orderId}`,
         { orderStatus }
       );
       return response.data;
