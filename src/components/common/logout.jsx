@@ -9,15 +9,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { logoutUserThunk } from "@/store/auth-slice";
+import { logoutUserThunk, resetTokenAndCredentials } from "@/store/auth-slice";
 import { useDispatch } from "react-redux";
 import { AlertDescription } from "../ui/alert";
+import { useNavigate } from "react-router-dom";
 
 function Logout({ children, open = false, onOpenChange = () => {} }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleLogout = () => {
-    dispatch(logoutUserThunk());
+    // dispatch(logoutUserThunk());
     onOpenChange(false);
+    dispatch(resetTokenAndCredentials());
+    sessionStorage.clear();
+    navigate("/auth/login");
   };
 
   return (

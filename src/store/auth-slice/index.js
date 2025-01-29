@@ -9,6 +9,7 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
+  authToken: JSON.parse(sessionStorage.getItem("auth_token")) || "",
 };
 
 export const registerUserThunk = createAsyncThunk(
@@ -16,8 +17,8 @@ export const registerUserThunk = createAsyncThunk(
   async (formData) => {
     const response = await axios.post(
       `${API_BASE_URL}/api/auth/register`,
-      formData,
-      { withCredentials: true }
+      formData
+      // { withCredentials: true }
     );
     return response.data;
   }
@@ -48,15 +49,29 @@ export const loginUserThunk = createAsyncThunk(
     return response.data;
   }
 );
-export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
-  const response = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
-    withCredentials: true,
-    headers: {
-      "Cache-Control": "no-cache, no-store, must-revalidate, proxy-revalidate",
-    },
-  });
-  return response.data;
-});
+// export const checkAuthThunk = createAsyncThunk("/auth/checkauth", async () => {
+//   const response = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
+//     withCredentials: true,
+//     headers: {
+//       "Cache-Control": "no-cache, no-store, must-revalidate, proxy-revalidate",
+//     },
+//   });
+//   return response.data;
+// });
+
+export const checkAuthThunk = createAsyncThunk(
+  "/auth/checkauth",
+  async (authToken) => {
+    const response = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Cache-Control":
+          "no-cache, no-store, must-revalidate, proxy-revalidate",
+      },
+    });
+    return response.data;
+  }
+);
 
 export const logoutUserThunk = createAsyncThunk("/auth/logout", async () => {
   const response = await axios.post(
@@ -89,7 +104,7 @@ export const updateUserThunk = createAsyncThunk(
 
 export const resetPasswordThunk = createAsyncThunk(
   "/auth/resetpassword",
-  async ({ oldPassword, newPassword }) => {
+  async ({ oldPassword, newPassword, userId }) => {
     try {
       const encryptedOldPassword = CryptoJS.AES.encrypt(
         oldPassword,
@@ -105,6 +120,7 @@ export const resetPasswordThunk = createAsyncThunk(
         {
           oldPassword: encryptedOldPassword,
           newPassword: encryptedNewPassword,
+          userId,
         },
         {
           withCredentials: true,
@@ -123,9 +139,10 @@ const authSlice = createSlice({
   reducers: {
     // action creator name : reducer function
     setUser: (state, action) => {},
-    logOut: (state, action) => {
-      // do api cals to logout the user
-      // can't do that here
+    resetTokenAndCredentials: (state) => {
+      state.authToken = null;
+      state.user = null;
+      state.isAuthenticated = false;
     },
   },
   extraReducers: (builder) => {
@@ -153,10 +170,16 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
+        state.authToken = action.payload.token;
+        sessionStorage.setItem(
+          "auth_token",
+          JSON.stringify(action.payload.token)
+        );
       } else {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
+        state.authToken = null;
       }
     });
     builder.addCase(loginUserThunk.rejected, (state, action) => {
@@ -205,6 +228,6 @@ const authSlice = createSlice({
 });
 
 // export action creator to set the user
-export const { setUser } = authSlice.actions;
+export const { setUser, resetTokenAndCredentials } = authSlice.actions;
 // export reducer to include it in the store
 export default authSlice.reducer;

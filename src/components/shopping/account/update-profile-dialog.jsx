@@ -36,6 +36,7 @@ function UpdateProfileDialog({ user, dialogOpen, setDialogOpen }) {
     email: user?.email,
   };
   const [profile, setProfile] = useState({
+    userId: user?.id,
     userName: user?.userName,
     email: user?.email,
     password: "",

@@ -11,7 +11,6 @@ const AdminDashboard = () => {
     dispatch(
       setBreadcrumb({ level: 1, label: "Dashboard", path: "/admin/dashboard" })
     );
-    console.log("breadcrumb when dashboard loaded : ", breadcrumb);
   }, []);
 
   return <div>admin dashboard</div>;

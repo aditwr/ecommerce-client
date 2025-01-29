@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getAddress } from "@/utils/address-utils";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import paypalIcon from "@/assets/common/paypal-icon.png";
 
 import {
   Dialog,
@@ -49,7 +50,7 @@ const ShoppingCheckout = () => {
 
   useEffect(() => {
     try {
-      getAddress().then((res) => {
+      getAddress(user?.id).then((res) => {
         setAddresses(res.data);
         setAddressShippingIsEmpty(res?.data?.length === 0);
       });
@@ -58,7 +59,7 @@ const ShoppingCheckout = () => {
         title: error.message,
       });
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (selectedAddress !== null) {
@@ -298,8 +299,9 @@ const ShoppingCheckout = () => {
                 <Button
                   {...{ disabled: !canOrder }}
                   onClick={handleInitialPaypalPayment}
-                  className="w-full"
+                  className="flex items-center justify-center w-full gap-x-2"
                 >
+                  <img src={paypalIcon} alt="" className="w-auto h-8" />
                   {processingPayment ? (
                     <div className="flex items-center justify-center w-full h-full gap-x-3">
                       <span className="block w-5 h-5 border-b-2 border-white rounded-full animate-spin"></span>
@@ -309,6 +311,45 @@ const ShoppingCheckout = () => {
                     "Pay with Paypal"
                   )}
                 </Button>
+              </div>
+            </div>
+
+            <div className="p-4 px-6 mt-4 bg-white border rounded-md">
+              <div className="flex items-center">
+                <img src={paypalIcon} alt="" className="w-auto h-8" />
+                <h1 className="mb-2 font-semibold text-md">Demo Payment</h1>
+              </div>
+              <div className="">
+                <p className="text-sm text-neutral-600">
+                  Untuk melakukan simulasi pembayaran dengan paypal, silahkan
+                  gunakan <i>testing akun paypal</i> berikut :
+                </p>
+                <div className="mt-2">
+                  <table>
+                    <tr>
+                      <td className="w-24 text-sm font-semibold text-neutral-800">
+                        Email
+                      </td>
+                      <td className="text-sm">
+                        <span className="text-neutral-600">:</span>{" "}
+                        <span className="font-normal text-neutral-800">
+                          sb-ah9hr36890607@personal.example.com
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-24 text-sm font-semibold text-neutral-800">
+                        Password
+                      </td>
+                      <td className="text-sm">
+                        <span className="text-neutral-600">:</span>{" "}
+                        <span className="font-normal text-neutral-800">
+                          S!s:hj7F
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

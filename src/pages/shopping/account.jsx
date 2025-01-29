@@ -15,7 +15,6 @@ const ShoppingAccount = () => {
   const [activeTab, setActiveTab] = useState(
     searchParams?.get("activeTab") || "orders"
   );
-  console.log(activeTab);
 
   function goToTab(tab) {
     const search_params = new URLSearchParams();

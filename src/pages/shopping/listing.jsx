@@ -27,6 +27,7 @@ import { getAddress } from "@/utils/address-utils";
 
 function ShoppingListing() {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const [searchParams, setSearchParams] = useSearchParams();
   const { products, product, isLoading } = useSelector(
     (state) => state.shopProducts
@@ -54,12 +55,12 @@ function ShoppingListing() {
 
   useEffect(() => {
     // check is user already set a shipping address
-    getAddress().then((response) => {
+    getAddress(user?.id).then((response) => {
       if (response?.data?.length === 0) {
         // set alert
       }
     });
-  }, []);
+  }, [user]);
 
   // Update url based on related state changes
   useEffect(() => {
@@ -231,11 +232,15 @@ function ShoppingListing() {
               ))
             ) : products?.length > 0 ? (
               products.map((product) => (
-                <ShoppingProductCard
+                <div
                   key={product._id}
-                  product={product}
-                  handleGetProductDetails={handleGetProductDetails}
-                />
+                  className="rounded-md hover:shadow-2xl hover:cursor-pointer"
+                >
+                  <ShoppingProductCard
+                    product={product}
+                    handleGetProductDetails={handleGetProductDetails}
+                  />
+                </div>
               ))
             ) : (
               <div className="text-center text-muted-foreground">

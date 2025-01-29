@@ -27,7 +27,7 @@ import PaymentSuccessPage from "./pages/shopping/payment-success";
 import AdminSecondLayout from "./components/admin/layout-two";
 
 function App() {
-  const { isAuthenticated, user, isLoading } = useSelector(
+  const { isAuthenticated, user, isLoading, authToken } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ function App() {
   // If authenticated, decode the token and get user data
   // Store the user authenticated data in redux store
   useEffect(() => {
-    dispatch(checkAuthThunk());
+    dispatch(checkAuthThunk(authToken));
   }, []);
 
   // Get cart data of the user if authenticated from the server

@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 const AdminHeader = ({ setOpen }) => {
   const { breadcrumb } = useSelector((state) => state.breadcrumb);
   const navigate = useNavigate();
-  console.log(breadcrumb);
   return (
     <header className="flex items-center justify-between w-full px-4 py-3 mb-4 border-b bg-background">
       <div className="flex items-center gap-x-4">

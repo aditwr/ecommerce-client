@@ -8,8 +8,78 @@ import {
 import { Button } from "../ui/button";
 import { ShoppingCartIcon, StarIcon } from "lucide-react";
 import RiviewProduct from "./riview";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRiviews } from "@/store/shop/RiviewSlice";
+import {
+  addProductToCartThunk,
+  getCartDataThunk,
+} from "@/store/shop/CartSlice";
+import { useToast } from "@/hooks/use-toast";
 
 function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
+  const { product, isLoading } = useSelector((state) => state.shopProducts);
+  const { user } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+  const [productRiviews, setProductRiviews] = useState([]);
+  const dispatch = useDispatch();
+  const [averateRating, setAverageRating] = useState(0);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setAverageRating(0);
+    if (productDetails?._id) {
+      dispatch(fetchRiviews({ productId: productDetails?._id })).then(
+        (action) => {
+          if (action?.payload?.success) {
+            setProductRiviews(action.payload.riviews);
+          }
+        }
+      );
+    }
+  }, [productDetails]);
+
+  useEffect(() => {
+    if (productRiviews.length > 0) {
+      const totalRating = productRiviews.reduce((acc, item) => {
+        return acc + item.rating;
+      }, 0);
+      setAverageRating(totalRating / productRiviews.length);
+    }
+  }, [productRiviews]);
+
+  const handleAddProductToCart = ({
+    userId,
+    productId,
+    quantity,
+    totalStock,
+  }) => {
+    // cart.products & productId
+    if (cart?.products && cart?.products.length > 0) {
+      let productInCart = cart.products.find(
+        (product) => product.productId._id === productId
+      );
+      if (productInCart) {
+        const currentQtyInCart = productInCart?.quantity;
+        if (currentQtyInCart === totalStock) {
+          toast({
+            title: `Only ${totalStock} Pcs in stock, you can't add more`,
+          });
+          return; // Exit the function
+        }
+      }
+    }
+
+    dispatch(addProductToCartThunk({ userId, productId, quantity }))
+      .then(() => {
+        toast({
+          title: "Product added to cart",
+          description: "Check your cart to view the product",
+        });
+      })
+      .then(() => dispatch(getCartDataThunk(userId)));
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogContent className="flex w-full gap-8 max-w-[90vw] sm:max-w-[90vw] lg:max-w-[700px]">
@@ -27,7 +97,7 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
             <DialogTitle className="text-xl font-bold">
               {productDetails?.title}
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
+            <DialogDescription className="text-sm text-neutral-800">
               {productDetails?.description}
             </DialogDescription>
             <div className="">
@@ -35,14 +105,24 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
                 {/* rating */}
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-0.5">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-secondary" />
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <StarIcon
+                        key={index}
+                        className={`w-4 h-4 ${
+                          index <= Math.floor(averateRating) - 1
+                            ? "fill-primary"
+                            : ""
+                        }`}
+                      />
+                    ))}
                   </div>
-                  <span className="font-medium text-md text-muted-foreground">
-                    (4.5)
+                  <span className=" text-md text-neutral-900">
+                    <span className="font-medium">
+                      {averateRating.toFixed(1)}
+                    </span>{" "}
+                    <span className="text-sm text-neutral-700">
+                      ({productRiviews.length} reviews)
+                    </span>
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mb-6">
@@ -70,13 +150,21 @@ function ProductDetailsDialog({ isOpen, setOpen, productDetails }) {
 
                 <div className="flex gap-x-2">
                   <Button
-                    variant="secondary"
-                    className="flex w-full basis-4/12"
+                    {...{ disabled: product?.totalStock === 0 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddProductToCart({
+                        userId: user.id,
+                        productId: product?._id,
+                        quantity: 1,
+                        totalStock: product?.totalStock,
+                      });
+                    }}
+                    className="flex w-full"
                   >
                     <ShoppingCartIcon className="w-6 h-6" />
-                    Add to Cart
+                    Add to Shopping Cart
                   </Button>
-                  <Button className="w-full basis-8/12">Checkout</Button>
                 </div>
               </div>
             </div>

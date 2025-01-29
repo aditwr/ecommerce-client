@@ -22,11 +22,12 @@ import { AlertCircle } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordThunk } from "@/store/auth-slice";
 import { useToast } from "@/hooks/use-toast";
 
 function ResetPasswordDialog({ dialogOpen, setDialogOpen }) {
+  const { user } = useSelector((state) => state.auth);
   const [errorMessage, setErrorMessage] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -58,22 +59,22 @@ function ResetPasswordDialog({ dialogOpen, setDialogOpen }) {
 
   function handleResetPassword() {
     setErrorMessage("");
-    dispatch(resetPasswordThunk({ oldPassword, newPassword })).then(
-      (action) => {
-        if (action.payload.success) {
-          setDialogOpen(false);
-          setOldPassword("");
-          setNewPassword("");
-          toast({
-            title: action.payload.message,
-          });
-        } else {
-          setErrorMessage(action.payload.message);
-          setOldPassword("");
-          setNewPassword("");
-        }
+    dispatch(
+      resetPasswordThunk({ oldPassword, newPassword, userId: user?.id })
+    ).then((action) => {
+      if (action.payload.success) {
+        setDialogOpen(false);
+        setOldPassword("");
+        setNewPassword("");
+        toast({
+          title: action.payload.message,
+        });
+      } else {
+        setErrorMessage(action.payload.message);
+        setOldPassword("");
+        setNewPassword("");
       }
-    );
+    });
   }
 
   return (

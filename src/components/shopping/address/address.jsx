@@ -28,9 +28,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import noDataImg from "@/assets/common/no-data.svg";
+import { useSelector } from "react-redux";
 
 function AddressSection() {
+  const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
+    userId: user?.id || "",
     address: "",
     city: "",
     postalCode: "",
@@ -44,7 +47,7 @@ function AddressSection() {
   const [canSubmit, setCanSubmit] = useState(false);
 
   useEffect(() => {
-    getAddress()
+    getAddress(user?.id)
       .then((res) => {
         if (res.success) {
           setAddressList(res.data);
@@ -53,7 +56,7 @@ function AddressSection() {
       .catch((error) => {
         console.log("getAddress error: ", error);
       });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     // Check if all fields are filled
@@ -83,7 +86,7 @@ function AddressSection() {
           title: result.message,
         });
 
-        const addresses = await getAddress();
+        const addresses = await getAddress(user?.id);
         if (addresses?.success) {
           setAddressList(addresses.data);
         }
@@ -99,9 +102,9 @@ function AddressSection() {
 
   async function handleDelete(addressId) {
     try {
-      const result = await deleteAddress(addressId);
+      const result = await deleteAddress({ addressId, userId: user?.id });
       if (result?.success) {
-        const addresses = await getAddress();
+        const addresses = await getAddress(user?.id);
         if (addresses?.success) {
           setAddressList(addresses.data);
         }

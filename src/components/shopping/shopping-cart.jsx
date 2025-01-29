@@ -7,6 +7,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+import emptyCartImage from "@/assets/common/empty-cart.svg";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -142,7 +144,7 @@ function ShoppingCart() {
           </span>
           Shopping Cart
         </SheetTitle>
-        <p className="mb-1 font-normal text-secondary-foreground text-md">
+        <p className="mb-1 text-sm font-normal text-neutral-700">
           {cart?.products?.length > 0
             ? `You have ${cart.products.length} items in your cart`
             : "Your cart is empty"}
@@ -275,9 +277,18 @@ function ShoppingCart() {
               </ul>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <span className="text-muted-foreground">
-                  Your cart is empty!
-                </span>
+                <div className="space-y-4">
+                  <div className="flex justify-center w-full h-32">
+                    <img
+                      src={emptyCartImage}
+                      alt="no data image"
+                      className="object-contain h-full"
+                    />
+                  </div>
+                  <h3 className="text-sm font-medium text-neutral-600">
+                    Your cart is empty!
+                  </h3>
+                </div>
               </div>
             )}
           </div>

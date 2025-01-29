@@ -49,7 +49,7 @@ const LandingSection = ({
     <section id={id} className={wrapperClassName}>
       <div className="mx-auto ">
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-xl font-bold text-center sm:text-2xl 2xl:text-3xl">
+          <h1 className="text-xl font-bold tracking-wide text-center font-pattaya sm:text-2xl 2xl:text-3xl">
             {title}
           </h1>
           <p className="text-base text-center text-gray-500 2xl:text-lg">
@@ -147,7 +147,7 @@ const ShoppingHome = () => {
       <LandingSection
         id="product-categories"
         title="Product Categories"
-        description="Choose your favorite category"
+        description="Choose your favorite category of our collection"
         wrapperClassName="py-16 bg-gray-100"
       >
         <div className="grid justify-center grid-cols-1 gap-4 px-4 mx-auto xl:container sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -185,7 +185,7 @@ const ShoppingHome = () => {
             products.map((product) => (
               <div
                 key={product._id}
-                className="hover:shadow-2xl hover:cursor-pointer"
+                className="rounded-md hover:shadow-2xl hover:cursor-pointer"
                 onClick={() => handleProductClick(product._id)}
               >
                 <ShoppingProductCard product={product} />

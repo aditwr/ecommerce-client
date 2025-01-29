@@ -56,7 +56,6 @@ function AdminOrderListing() {
       if (action?.payload?.success) {
         let totalPages = Math.ceil(action?.payload?.countDocuments / limit);
         setTotalPages(totalPages);
-        console.log(action.payload);
       }
     });
   }, [dispatch, page, sort, totalPages, limit]);

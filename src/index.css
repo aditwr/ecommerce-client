@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 /* ... */
+@import url("https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap");
 
 @layer base {
   :root {
@@ -145,6 +146,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .font-fleur-de-leah {
+    font-family: "Fleur De Leah", serif;
   }
 }
 

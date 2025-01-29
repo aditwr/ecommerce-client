@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 
 function ProductFilter({ filters, handleFilter }) {
   return (
-    <div className="rounded-lg shadow-sm bg-background">
+    <div className="rounded-lg shadow-sm bg-neutral-50 bg-background">
       <div className="p-4 border-b">
         <h2 className="text-lg font-semibold">Filters</h2>
       </div>

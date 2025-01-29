@@ -54,6 +54,7 @@ const riviewSchema = z.object({
 });
 
 function RiviewProduct({ productId, wrapperClass }) {
+  const { user } = useSelector((state) => state.auth);
   const [riviews, setRiviews] = useState([]);
   const [canRiview, setCanRiview] = useState(false);
   const [rating, setRating] = useState(0);
@@ -86,7 +87,9 @@ function RiviewProduct({ productId, wrapperClass }) {
     });
   }
   function checkUserRiview() {
-    dispatch(checkIsUserHasRiviewedTheProduct({ productId })).then((action) => {
+    dispatch(
+      checkIsUserHasRiviewedTheProduct({ productId, userId: user?.id })
+    ).then((action) => {
       if (action?.payload?.success) {
         setHasRiviewed(action?.payload?.data?.isUserAlreadyRiviewed);
         setUserRiview(action?.payload?.data?.riview);
@@ -100,7 +103,9 @@ function RiviewProduct({ productId, wrapperClass }) {
       fetchRiviewsForProduct();
 
       // check if user brought the product
-      dispatch(checkIsUserBroughtTheProduct({ productId })).then((action) => {
+      dispatch(
+        checkIsUserBroughtTheProduct({ productId, userId: user?.id })
+      ).then((action) => {
         if (action?.payload?.success) {
           setCanRiview(action?.payload?.data?.isUserBroughtTheProduct);
         }
@@ -112,7 +117,12 @@ function RiviewProduct({ productId, wrapperClass }) {
 
   function onSubmit(formData) {
     dispatch(
-      createRiview({ productId, rating, comment: formData.comment })
+      createRiview({
+        productId,
+        rating,
+        comment: formData.comment,
+        userId: user?.id,
+      })
     ).then((action) => {
       if (action?.payload?.success) {
         setHasRiviewed(true);

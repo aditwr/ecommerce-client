@@ -2,6 +2,7 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const addAddress = async ({
+  userId,
   address,
   city,
   postalCode,
@@ -13,6 +14,7 @@ export const addAddress = async ({
     const response = await axios.post(
       `${API_BASE_URL}/api/account/address/add`,
       {
+        userId,
         address,
         city,
         postalCode,
@@ -31,10 +33,10 @@ export const addAddress = async ({
   }
 };
 
-export const getAddress = async () => {
+export const getAddress = async (userId) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/api/account/address/get`,
+      `${API_BASE_URL}/api/account/address/get/${userId}`,
       {
         withCredentials: true, // Send cookies
       }
@@ -46,10 +48,10 @@ export const getAddress = async () => {
   }
 };
 
-export const deleteAddress = async (addressId) => {
+export const deleteAddress = async ({ addressId, userId }) => {
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}/api/account/address/delete/${addressId}`,
+      `${API_BASE_URL}/api/account/address/delete/${addressId}/user/${userId}`,
       {
         withCredentials: true, // Send cookies
       }

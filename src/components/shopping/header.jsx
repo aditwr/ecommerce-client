@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { logoutUserThunk } from "@/store/auth-slice";
+import { logoutUserThunk, resetTokenAndCredentials } from "@/store/auth-slice";
 import {
   Sheet,
   SheetContent,
@@ -59,7 +59,10 @@ const HeaderRightContent = () => {
 
   function handleLogout() {
     // Perform logout
-    dispatch(logoutUserThunk());
+    // dispatch(logoutUserThunk());
+    dispatch(resetTokenAndCredentials());
+    sessionStorage.clear();
+    navigate("/auth/login");
   }
 
   return (
@@ -105,7 +108,9 @@ const ShoppingHeader = () => {
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         <Link to="/shop/home" className="flex items-center gap-2">
           <ShoppingBag className="w-6 h-6" />
-          <span className="text-lg font-bold">FashionCommerce</span>
+          <span className="text-xl font-bold tracking-wider lg:text-2xl font-pattaya">
+            Lunora
+          </span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>
